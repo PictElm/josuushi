@@ -1,5 +1,6 @@
 module Main exposing (..)
 
+import Array
 import Browser
 import Html
 import Html.Attributes as Attr
@@ -31,13 +32,10 @@ viewCounterRegular repr number =
     , viewRuby (numberToKanjiRuby number)
     ]
 
-type alias Exception =
-  { number : Int
-  , result : Ruby
-  }
+type alias Exception = Ruby
 
 viewCounterException : Exception -> Ruby -> Int -> Html.Html Message
-viewCounterException special repr nummber =
+viewCounterException special repr number =
   Html.div []
     [ Html.text "TODO: special cases not implemented yet" ]
 
@@ -45,7 +43,7 @@ viewCounterException special repr nummber =
 type alias Counter =
   { repr : {-List-} Ruby -- kanji and reading for the counter
   , tags : List String -- what it may be a counter for
-  , cases : List Exception -- special cases / exceptions
+  , cases : List (Maybe Exception) -- special cases / exceptions
   }
 
 findCounter : String -> Counter
@@ -53,41 +51,37 @@ findCounter query =
   Counter
     (Ruby "CHA" "nyan")
     [ "x", "y", "z" ]
-    []
+    [ Just (Ruby "XHA" "nyom")
+    ]
 
 viewCounter : Counter -> Html.Html Message
 viewCounter counter =
-  Html.ol []
-    [ Html.li [] [ viewCounterRegular counter.repr 1 ]
-    , Html.li [] [ viewCounterRegular counter.repr 2 ]
-    , Html.li [] [ viewCounterRegular counter.repr 3 ]
-    , Html.li [] [ viewCounterRegular counter.repr 4 ]
-    , Html.li [] [ viewCounterRegular counter.repr 5 ]
-    , Html.li [] [ viewCounterRegular counter.repr 6 ]
-    , Html.li [] [ viewCounterRegular counter.repr 7 ]
-    , Html.li [] [ viewCounterRegular counter.repr 8 ]
-    , Html.li [] [ viewCounterRegular counter.repr 9 ]
-    ]
+  let asArray = Array.fromList counter.cases in -- TODO: not use array[?]
+  Html.ol [] (
+    List.map
+      (\n -> Html.li [] [ (
+        case Array.get (n-1) asArray of
+          Just (Just ex) -> viewCounterException ex counter.repr n
+          Just Nothing -> viewCounterRegular counter.repr n
+          Nothing -> viewCounterRegular counter.repr n
+      ) ])
+      [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+  )
 
 --- application
 type alias Model =
   { query : String
-  , count : Int -- TODO: Maybe Int
-  , countInput : String
   , current : Maybe Counter
   }
 
 init : Model
 init =
   { query = ""
-  , count = 1
-  , countInput = "1"
   , current = Nothing
   }
 
 type Message
   = UpdateQuery String
-  | UpdateCount String
   | FindCounter
 
 update : Message -> Model -> Model
@@ -95,14 +89,6 @@ update msg model =
   case msg of
     UpdateQuery niw ->
       { model | query = niw }
-    UpdateCount may ->
-      { model
-        | count =
-          case String.toInt may of
-            Just num -> num
-            Nothing  -> -1
-        , countInput = may
-      }
     FindCounter ->
       { model | current = Just (findCounter model.query) }
 
@@ -119,12 +105,6 @@ view : Model -> Html.Html Message
 view model =
   Html.div []
     [ viewInput "enter a query here" model.query UpdateQuery
-    , viewInput "coun" model.countInput UpdateCount
-    , Html.text (
-        if model.count < 0
-          then "invalid count"
-          else ""
-      )
     , Html.button
         [ Event.onMouseDown FindCounter
         , Event.on "keydown" (Json.succeed FindCounter)
@@ -133,7 +113,7 @@ view model =
     , Html.div [] (
         case model.current of
           Just it -> [ Html.hr [] [], viewCounter it ]
-          Nothing -> [ Html.text "enter a query above" ]
+          Nothing -> []
       )
     ]
 
