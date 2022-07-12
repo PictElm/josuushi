@@ -98,12 +98,25 @@ viewRuby rb =
     , Html.rp [] [ Html.text ")" ]
     ]
 
-hundred_ : Ruby
-hundred_ = Ruby "百" "ひゃく" -- XXX/FIXME: some **will** be straight up wrong (eg. 300, 600, 800)
-ten_ : Ruby
+
+ifBelow : Int -> List (Int, Int -> a) -> (Int -> a) -> a
+ifBelow u below above =
+  case List.head below of
+    Just it ->
+      if u < Tuple.first it
+        then Tuple.second it <| u
+        else ifBelow u
+          (List.tail below |> Maybe.withDefault [])
+          above
+    Nothing ->
+      above u
+
+hundred_ = Ruby "百" "ひゃく"
+three_bundred_ = Ruby "三百" "さんびゃく"
+six_pundred_ = Ruby "六百" "ろっぴゃく"
+eight_pundred_ = Ruby "八百" "はっぴゃく"
 ten_ = Ruby "十" "じゅう"
-one_nine_ : Array.Array Ruby
-one_nine_ =
+one_ten_ =
   Array.fromList
     [ Ruby "一" "いち"
     , Ruby "二" "に"
@@ -116,24 +129,22 @@ one_nine_ =
     , Ruby "九" "きゅう"
     , ten_
     ]
--- YYY: maybe could do better
 viewNumberWithRuby : Int -> Html.Html Message
 viewNumberWithRuby number =
-  if number < 11
-    then case Array.get (number - 1) one_nine_ of
-      Just it -> viewRuby it
-      Nothing -> Html.span [] [ Html.text "unreachable" ]
-    else if number < 20
-      then Html.span [] [ viewRuby ten_, viewNumberWithRuby (modBy 10 number) ]
-      else if number < 100
-        then Html.span [] [ viewNumberWithRuby (number // 10), viewNumberWithRuby (10 + modBy 10 number) ]
-        else if 100 == number
-          then viewRuby hundred_
-          else if number < 200
-            then Html.span [] [ viewRuby hundred_, viewNumberWithRuby (modBy 100 number) ]
-            else if number < 1000
-              then Html.span [] [ viewNumberWithRuby (number // 100), viewNumberWithRuby (100 + modBy 100 number) ]
-              else Html.span [] [ Html.text "idk how to count to that" ]
+  ifBelow number
+    [ (11,   \u -> Array.get (u - 1) one_ten_ |> Maybe.map viewRuby |> Maybe.withDefault (Html.div [] [ Html.text "unreachable" ]))
+    , (20,   \u -> Html.span [] [ viewRuby ten_, viewNumberWithRuby (modBy 10 u) ])
+    , (100,  \u -> Html.span [] [ viewNumberWithRuby (u // 10), viewNumberWithRuby (10 + modBy 10 u) ])
+    , (101,  \u -> Html.span [] [ viewRuby hundred_ ])
+    , (200,  \u -> Html.span [] [ viewRuby hundred_, viewNumberWithRuby (modBy 100 u) ])
+    , (300,  \u -> Html.span [] [ viewNumberWithRuby (u // 100), viewNumberWithRuby (100 + modBy 100 u) ])
+    , (400,  \u -> Html.span [] [ viewRuby three_bundred_, viewNumberWithRuby (100 + modBy 100 u) ])
+    , (600,  \u -> Html.span [] [ viewNumberWithRuby (u // 100), viewNumberWithRuby (100 + modBy 100 u) ])
+    , (700,  \u -> Html.span [] [ viewRuby six_pundred_, viewNumberWithRuby (100 + modBy 100 u) ])
+    , (800,  \u -> Html.span [] [ viewNumberWithRuby (u // 100), viewNumberWithRuby (100 + modBy 100 u) ])
+    , (900,  \u -> Html.span [] [ viewRuby eight_pundred_, viewNumberWithRuby (100 + modBy 100 u) ])
+    , (1000, \u -> Html.span [] [ viewNumberWithRuby (u // 100), viewNumberWithRuby (100 + modBy 100 u) ])
+    ] (      \_ -> Html.span [] [ Html.text "idk how to count to that" ])
 
 viewCounterRegular : Ruby -> Int -> Html.Html Message
 viewCounterRegular repr number =
@@ -142,7 +153,6 @@ viewCounterRegular repr number =
     , viewRuby repr
     ]
 
--- TODO
 viewCounterException : Exception -> Ruby -> Int -> Html.Html Message
 viewCounterException special repr number =
   Html.div []
@@ -183,20 +193,22 @@ type SearchResult
 
 type alias Model =
   { query : String
+  , prevQuery : String
   , current : SearchResult
   , counters : CounterStore
-  }
-
-init : Model
-init =
-  { query = ""
-  , current = WaitingUser
-  , counters = loadEveryCounters
   }
 
 type Message
   = UpdateQuery String
   | FindCounter
+
+init : Model
+init =
+  { query = ""
+  , prevQuery = ""
+  , current = WaitingUser
+  , counters = loadEveryCounters
+  }
 
 update : Message -> Model -> Model
 update msg model =
@@ -204,34 +216,32 @@ update msg model =
     UpdateQuery niw ->
       { model | query = niw }
     FindCounter ->
-      { model | current = findCounter model.counters model.query }
-
-viewInput : String -> String -> (String -> Message) -> Html.Html Message
-viewInput ph val msg =
-  Html.input
-        [ Attr.placeholder ph
-        , Attr.value val
-        , Event.onInput msg
-        ]
-        []
+      { model | current = findCounter model.counters model.query
+              , prevQuery = model.query }
 
 view : Model -> Html.Html Message
 view model =
   Html.div []
-    [ {-Html.p [] [ Html.text ("embedded: " ++ Debug.toString model.counters) ]
-    ,-} viewInput "enter a query here" model.query UpdateQuery
-    , Html.button
-        [ Event.onMouseDown FindCounter
-        , Event.on "keydown" (Json.succeed FindCounter) -- FIXME: only trigger for " " and "\r" or something
+    [ Html.form
+        [ Event.onInput UpdateQuery
+        , Event.onSubmit FindCounter
         ]
-        [ Html.text "find" ]
+        [ Html.input
+            [ Attr.placeholder "enter a query here"
+            , Attr.value model.query
+            ]
+            []
+        , Html.button
+            []
+            [ Html.text "find" ]
+        ]
     , Html.div [] (
         case model.current of
           WaitingUser ->
             []
           NotFound ->
-            [ Html.hr [] [] -- TODO: text should not update with input, needs to use a `model.previousQuery`
-            , Html.div [] [ Html.text ("no counter found for " ++ model.query) ]
+            [ Html.hr [] []
+            , Html.div [] [ Html.text ("no counter found for " ++ model.prevQuery) ]
             ]
           Found ls ->
             [ Html.hr [] []
