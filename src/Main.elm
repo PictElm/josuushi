@@ -64,6 +64,20 @@ loadCounter (ref, json) =
       (Just (Debug.log "loadCounter failed" (ref, e)))
         |> Maybe.andThen (\_ -> Nothing)
 
+insertByTags : (String, Counter) -> Dict String (List Counter) -> Dict String (List Counter)
+insertByTags (ref, counter) acc =
+  List.foldr
+    (\tag bcc ->
+      Dict.insert
+        tag
+        (Dict.get tag bcc
+          |> Maybe.withDefault []
+          |> (::) counter)
+        bcc
+    )
+    acc
+    counter.tags
+
 loadEveryCounters : CounterStore
 loadEveryCounters =
   let
@@ -71,7 +85,7 @@ loadEveryCounters =
       |> List.filterMap loadCounter
   in
     { byRef = Dict.fromList all
-    , byTag = Dict.empty
+    , byTag = List.foldr insertByTags Dict.empty all
     }
 
 --- kanji
@@ -142,10 +156,12 @@ findCounterByRef store ref =
     Nothing -> NotFound
 
 findCounterByTag : CounterStore -> String -> SearchResult
-findCounterByTag store ref =
-  NotFound
+findCounterByTag store tag =
+  case Dict.get tag store.byTag of
+    Just it -> Found it
+    Nothing -> NotFound
 
-findCounter = findCounterByRef
+findCounter = findCounterByTag
 
 viewCounter : Counter -> Html.Html Message
 viewCounter counter =
@@ -202,8 +218,8 @@ viewInput ph val msg =
 view : Model -> Html.Html Message
 view model =
   Html.div []
-    [ Html.p [] [ Html.text ("embedded: " ++ Debug.toString model.counters) ]
-    , viewInput "enter a query here" model.query UpdateQuery
+    [ {-Html.p [] [ Html.text ("embedded: " ++ Debug.toString model.counters) ]
+    ,-} viewInput "enter a query here" model.query UpdateQuery
     , Html.button
         [ Event.onMouseDown FindCounter
         , Event.on "keydown" (Json.succeed FindCounter) -- FIXME: only trigger for " " and "\r" or something
