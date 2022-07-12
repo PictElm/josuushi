@@ -23,6 +23,11 @@ type alias Counter =
   , cases : Dict Int Exception -- special cases / exceptions
   }
 
+type alias CounterStore =
+  { byRef : Dict String Counter
+  , byTag : Dict String (List Counter)
+  }
+
 rubyFromList : List String -> Ruby
 rubyFromList list =
   Ruby
@@ -51,13 +56,23 @@ counterDecoder =
     (Json.field "tags" (Json.list Json.string))
     (Json.field "cases" casesDecoder)
 
--- TODO
-loadCounter : String -> Counter
-loadCounter ref =
-  Counter (Ruby "" "") [] Dict.empty
-  -- Maybe.andThen
-  --   (Json.decodeString counterDecoder)
-  --   (Dict.get ref Emb.all)
+loadCounter : (String, String) -> Maybe (String, Counter)
+loadCounter (ref, json) =
+  case Json.decodeString counterDecoder json of
+    Result.Ok it -> Just (ref, it)
+    Result.Err e -> -- YYY: temp hack to get notified in console on fail
+      (Just (Debug.log "loadCounter failed" (ref, e)))
+        |> Maybe.andThen (\_ -> Nothing)
+
+loadEveryCounters : CounterStore
+loadEveryCounters =
+  let
+    all = Dict.toList Emb.all
+      |> List.filterMap loadCounter
+  in
+    { byRef = Dict.fromList all
+    , byTag = Dict.empty
+    }
 
 --- kanji
 viewRuby : Ruby -> Html.Html Message
@@ -117,19 +132,20 @@ viewCounterRegular repr number =
 viewCounterException : Exception -> Ruby -> Int -> Html.Html Message
 viewCounterException special repr number =
   Html.div []
-    [ Html.text "special cases not implemented yet" ]
+    [ viewRuby special ]
 
 --- counters
--- PLHO
-kaka : Dict Int Exception
-kaka = Dict.fromList [ (3, Ruby "XHA" "nyom") ]
--- TODO
-findCounter : String -> Counter
-findCounter query =
-  Counter
-    (Ruby "CHA" "nyan")
-    [ "x", "y", "z" ]
-    kaka
+findCounterByRef : CounterStore -> String -> SearchResult
+findCounterByRef store ref =
+  case Dict.get ref store.byRef of
+    Just it -> Found [ it ]
+    Nothing -> NotFound
+
+findCounterByTag : CounterStore -> String -> SearchResult
+findCounterByTag store ref =
+  NotFound
+
+findCounter = findCounterByRef
 
 viewCounter : Counter -> Html.Html Message
 viewCounter counter =
@@ -144,15 +160,22 @@ viewCounter counter =
   )
 
 --- application
+type SearchResult
+  = WaitingUser
+  | NotFound
+  | Found (List Counter)
+
 type alias Model =
   { query : String
-  , current : Maybe Counter
+  , current : SearchResult
+  , counters : CounterStore
   }
 
 init : Model
 init =
   { query = ""
-  , current = Nothing
+  , current = WaitingUser
+  , counters = loadEveryCounters
   }
 
 type Message
@@ -165,7 +188,7 @@ update msg model =
     UpdateQuery niw ->
       { model | query = niw }
     FindCounter ->
-      { model | current = Just (findCounter model.query) }
+      { model | current = findCounter model.counters model.query }
 
 viewInput : String -> String -> (String -> Message) -> Html.Html Message
 viewInput ph val msg =
@@ -179,7 +202,7 @@ viewInput ph val msg =
 view : Model -> Html.Html Message
 view model =
   Html.div []
-    [ Html.p [] [ Html.text ("embedded: " ++ Debug.toString Emb.all) ]
+    [ Html.p [] [ Html.text ("embedded: " ++ Debug.toString model.counters) ]
     , viewInput "enter a query here" model.query UpdateQuery
     , Html.button
         [ Event.onMouseDown FindCounter
@@ -188,8 +211,16 @@ view model =
         [ Html.text "find" ]
     , Html.div [] (
         case model.current of
-          Just it -> [ Html.hr [] [], viewCounter it ]
-          Nothing -> []
+          WaitingUser ->
+            []
+          NotFound ->
+            [ Html.hr [] [] -- TODO: text should not update with input, needs to use a `model.previousQuery`
+            , Html.div [] [ Html.text ("no counter found for " ++ model.query) ]
+            ]
+          Found ls ->
+            [ Html.hr [] []
+            , Html.div [] (List.map viewCounter ls)
+            ]
       )
     ]
 
