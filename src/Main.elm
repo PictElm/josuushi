@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import Array
 import Dict exposing (Dict)
@@ -26,8 +26,8 @@ type alias Counter =
 rubyFromList : List String -> Ruby
 rubyFromList list =
   Ruby
-    (Maybe.withDefault "ERROR" (List.head list))
-    (Maybe.withDefault "error" (List.head (List.drop 1 list)))
+    (List.head list |> Maybe.withDefault "ERROR")
+    (List.drop 1 list |> List.head |> Maybe.withDefault "error")
 
 rubyDecoder : Json.Decoder Ruby
 rubyDecoder =
@@ -36,13 +36,8 @@ rubyDecoder =
 filterIntKeys : Dict String a -> Dict Int a
 filterIntKeys dict =
   Dict.fromList (
-    List.filterMap
-      (\(k, v) ->
-        case String.toInt k of
-          Just kk -> Just (kk, v)
-          Nothing -> Nothing
-      )
-      (Dict.toList dict)
+    Dict.toList dict
+      |> List.filterMap (\(k, v) -> String.toInt k |> Maybe.andThen (\kk -> Just (kk, v)))
   )
 
 casesDecoder : Json.Decoder (Dict Int Exception)
@@ -56,9 +51,13 @@ counterDecoder =
     (Json.field "tags" (Json.list Json.string))
     (Json.field "cases" casesDecoder)
 
+-- TODO
 loadCounter : String -> Counter
 loadCounter ref =
   Counter (Ruby "" "") [] Dict.empty
+  -- Maybe.andThen
+  --   (Json.decodeString counterDecoder)
+  --   (Dict.get ref Emb.all)
 
 --- kanji
 viewRuby : Ruby -> Html.Html Message
@@ -70,9 +69,12 @@ viewRuby rb =
     , Html.rp [] [ Html.text ")" ]
     ]
 
-qhundo = Ruby "百" "ひゃく" -- XXX/FIXME: some **will** be straight up wrong (eg. 300, 600, 800)
-qten = Ruby "十" "じゅう"
-qonetonine =
+hundred_ : Ruby
+hundred_ = Ruby "百" "ひゃく" -- XXX/FIXME: some **will** be straight up wrong (eg. 300, 600, 800)
+ten_ : Ruby
+ten_ = Ruby "十" "じゅう"
+one_nine_ : Array.Array Ruby
+one_nine_ =
   Array.fromList
     [ Ruby "一" "いち"
     , Ruby "二" "に"
@@ -83,22 +85,23 @@ qonetonine =
     , Ruby "七" "なな"
     , Ruby "八" "はち"
     , Ruby "九" "きゅう"
-    , qten
+    , ten_
     ]
+-- YYY: maybe could do better
 viewNumberWithRuby : Int -> Html.Html Message
 viewNumberWithRuby number =
   if number < 11
-    then case Array.get (number-1) qonetonine of
+    then case Array.get (number - 1) one_nine_ of
       Just it -> viewRuby it
       Nothing -> Html.span [] [ Html.text "unreachable" ]
     else if number < 20
-      then Html.span [] [ viewRuby qten, viewNumberWithRuby (modBy 10 number) ]
+      then Html.span [] [ viewRuby ten_, viewNumberWithRuby (modBy 10 number) ]
       else if number < 100
         then Html.span [] [ viewNumberWithRuby (number // 10), viewNumberWithRuby (10 + modBy 10 number) ]
         else if 100 == number
-          then viewRuby qhundo
+          then viewRuby hundred_
           else if number < 200
-            then Html.span [] [ viewRuby qhundo, viewNumberWithRuby (modBy 100 number) ]
+            then Html.span [] [ viewRuby hundred_, viewNumberWithRuby (modBy 100 number) ]
             else if number < 1000
               then Html.span [] [ viewNumberWithRuby (number // 100), viewNumberWithRuby (100 + modBy 100 number) ]
               else Html.span [] [ Html.text "idk how to count to that" ]
@@ -191,6 +194,7 @@ view model =
     ]
 
 --- entry point
+main : Program () Model Message
 main =
   Browser.sandbox
     { init = init
