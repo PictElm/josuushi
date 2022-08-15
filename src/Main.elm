@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Array
+import Array exposing (Array)
 import Dict exposing (Dict)
 import Browser
 import Html
@@ -27,6 +27,12 @@ type alias CounterStore =
   { byRef : Dict String Counter
   , byTag : Dict String (List Counter)
   }
+
+rubyCat : Ruby -> Ruby -> Ruby
+rubyCat a b =
+  Ruby
+    (a.text ++ b.text)
+    (a.floating ++ b.floating)
 
 rubyFromList : List String -> Ruby
 rubyFromList list =
@@ -91,13 +97,17 @@ loadEveryCounters =
 --- kanji
 viewRuby : Ruby -> Html.Html Message
 viewRuby rb =
-  Html.ruby []
-    [ Html.text rb.text
-    , Html.rp [] [ Html.text "(" ]
-    , Html.rt [] [ Html.text rb.floating ]
-    , Html.rp [] [ Html.text ")" ]
-    ]
-
+  Html.span []
+    <| List.map
+      (\it ->
+        Html.ruby []
+          [ Html.text rb.text
+          , Html.rp [] [ Html.text "(" ]
+          , Html.rt [] [ Html.text it ]
+          , Html.rp [] [ Html.text ")" ]
+          ]
+      )
+      (String.split "/" rb.floating)
 
 ifBelow : Int -> List (Int, Int -> a) -> (Int -> a) -> a
 ifBelow u below above =
@@ -111,11 +121,17 @@ ifBelow u below above =
     Nothing ->
       above u
 
+hundred_ : Ruby
 hundred_ = Ruby "百" "ひゃく"
+three_bundred_ : Ruby
 three_bundred_ = Ruby "三百" "さんびゃく"
+six_pundred_ : Ruby
 six_pundred_ = Ruby "六百" "ろっぴゃく"
+eight_pundred_ : Ruby
 eight_pundred_ = Ruby "八百" "はっぴゃく"
+ten_ : Ruby
 ten_ = Ruby "十" "じゅう"
+one_ten_ : Array Ruby
 one_ten_ =
   Array.fromList
     [ Ruby "一" "いち"
@@ -129,32 +145,30 @@ one_ten_ =
     , Ruby "九" "きゅう"
     , ten_
     ]
-viewNumberWithRuby : Int -> Html.Html Message
-viewNumberWithRuby number =
+gatherNumberWithRuby : Int -> Ruby -> Ruby -- into a list of
+gatherNumberWithRuby number acc =
   ifBelow number
-    [ (11,   \u -> Array.get (u - 1) one_ten_ |> Maybe.map viewRuby |> Maybe.withDefault (Html.div [] [ Html.text "unreachable" ]))
-    , (20,   \u -> Html.span [] [ viewRuby ten_, viewNumberWithRuby (modBy 10 u) ])
-    , (100,  \u -> Html.span [] [ viewNumberWithRuby (u // 10), viewNumberWithRuby (10 + modBy 10 u) ])
-    , (101,  \u -> Html.span [] [ viewRuby hundred_ ])
-    , (200,  \u -> Html.span [] [ viewRuby hundred_, viewNumberWithRuby (modBy 100 u) ])
-    , (300,  \u -> Html.span [] [ viewNumberWithRuby (u // 100), viewNumberWithRuby (100 + modBy 100 u) ])
-    , (400,  \u -> Html.span [] [ viewRuby three_bundred_, viewNumberWithRuby (100 + modBy 100 u) ])
-    , (600,  \u -> Html.span [] [ viewNumberWithRuby (u // 100), viewNumberWithRuby (100 + modBy 100 u) ])
-    , (700,  \u -> Html.span [] [ viewRuby six_pundred_, viewNumberWithRuby (100 + modBy 100 u) ])
-    , (800,  \u -> Html.span [] [ viewNumberWithRuby (u // 100), viewNumberWithRuby (100 + modBy 100 u) ])
-    , (900,  \u -> Html.span [] [ viewRuby eight_pundred_, viewNumberWithRuby (100 + modBy 100 u) ])
-    , (1000, \u -> Html.span [] [ viewNumberWithRuby (u // 100), viewNumberWithRuby (100 + modBy 100 u) ])
-    ] (      \_ -> Html.span [] [ Html.text "idk how to count to that" ])
+    [ ( 11,   \u -> Array.get (u - 1) one_ten_ |> Maybe.withDefault (Ruby "error" "unreachable") )
+    , ( 20,   \u -> rubyCat ten_                                  (gatherNumberWithRuby (modBy 10 u) acc) )
+    , ( 100,  \u -> rubyCat (gatherNumberWithRuby (u // 10) acc)  (gatherNumberWithRuby (10 + modBy 10 u) acc) )
+    , ( 101,  \_ -> hundred_ )
+    , ( 200,  \u -> rubyCat hundred_                              (gatherNumberWithRuby (modBy 100 u) acc) )
+    , ( 300,  \u -> rubyCat (gatherNumberWithRuby (u // 100) acc) (gatherNumberWithRuby (100 + modBy 100 u) acc) )
+    , ( 400,  \u -> rubyCat three_bundred_                        (gatherNumberWithRuby (100 + modBy 100 u) acc) )
+    , ( 600,  \u -> rubyCat (gatherNumberWithRuby (u // 100) acc) (gatherNumberWithRuby (100 + modBy 100 u) acc) )
+    , ( 700,  \u -> rubyCat six_pundred_                          (gatherNumberWithRuby (100 + modBy 100 u) acc) )
+    , ( 800,  \u -> rubyCat (gatherNumberWithRuby (u // 100) acc) (gatherNumberWithRuby (100 + modBy 100 u) acc) )
+    , ( 900,  \u -> rubyCat eight_pundred_                        (gatherNumberWithRuby (100 + modBy 100 u) acc) )
+    , ( 1000, \u -> rubyCat (gatherNumberWithRuby (u // 100) acc) (gatherNumberWithRuby (100 + modBy 100 u) acc) )
+    ] (       \_ -> Ruby "error" "number too big")
 
 viewCounterRegular : Ruby -> Int -> Html.Html Message
 viewCounterRegular repr number =
   Html.div []
-    [ viewNumberWithRuby number
-    , viewRuby repr
-    ]
+    [ viewRuby (rubyCat (gatherNumberWithRuby number (Ruby "" "")) repr) ]
 
-viewCounterException : Exception -> Ruby -> Int -> Html.Html Message
-viewCounterException special repr number =
+viewCounterException : Exception -> Html.Html Message
+viewCounterException special =
   Html.div []
     [ viewRuby special ]
 
@@ -179,7 +193,7 @@ viewCounter counter =
     List.map
       (\n -> Html.li [] [ (
         case Dict.get n counter.cases of
-          Just ex -> viewCounterException ex counter.repr n
+          Just ex -> viewCounterException ex
           Nothing -> viewCounterRegular counter.repr n
       ) ])
       (List.range 1 237)

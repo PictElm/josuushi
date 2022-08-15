@@ -1,4 +1,4 @@
-#!/usr/bin/env nodejs
+#!/usr/bin/env node
 /**
  * build the app (`index.html`):
  * - embed JSON from data/
