@@ -1,14 +1,14 @@
 module Main exposing (main)
 
 import Array exposing (Array)
-import Dict exposing (Dict)
 import Browser
+import Dict exposing (Dict)
 import Html
 import Html.Attributes as Attr
 import Html.Events as Event
+import Http
 import Json.Decode as Json
-
-import Embedded as Emb
+import Task exposing (Task)
 
 type alias Ruby =
   { text : String
@@ -23,9 +23,9 @@ type alias Counter =
   , cases : Dict Int Exception -- special cases / exceptions
   }
 
-type alias CounterStore =
-  { byRef : Dict String Counter
-  , byTag : Dict String (List Counter)
+type alias CounterIndex =
+  { byRef : Dict String (List String) -- ref -> tags
+  , byTag : Dict String (List String) -- tag -> refs
   }
 
 rubyCat : Ruby -> Ruby -> Ruby
@@ -62,39 +62,32 @@ counterDecoder =
     (Json.field "tags" (Json.list Json.string))
     (Json.field "cases" casesDecoder)
 
-loadCounter : (String, String) -> Maybe (String, Counter)
-loadCounter (ref, json) =
-  case Json.decodeString counterDecoder json of
-    Result.Ok it -> Just (ref, it)
-    Result.Err e -> -- YYY: temp hack to get notified in console on fail
-      (Just (Debug.log "loadCounter failed" (ref, e)))
-        |> Maybe.andThen (\_ -> Nothing)
-
-insertByTags : (String, Counter) -> Dict String (List Counter) -> Dict String (List Counter)
-insertByTags (ref, counter) acc =
+insertByTags : (String, List String) -> Dict String (List String) -> Dict String (List String)
+insertByTags (ref, tags) acc =
   List.foldr
     (\tag bcc ->
       Dict.insert
         tag
         (Dict.get tag bcc
           |> Maybe.withDefault []
-          |> (::) counter)
+          |> (::) ref)
         bcc
     )
     acc
-    counter.tags
+    tags
 
-loadEveryCounters : CounterStore
-loadEveryCounters =
+counterIndex : CounterIndex
+counterIndex =
   let
-    all = Dict.toList Emb.all
-      |> List.filterMap loadCounter
+    pairs =
+      [ ("nichi", ["day", "days", "time"])
+      , ("ko", ["place holder", "plho", "da"])
+      ]
   in
-    { byRef = Dict.fromList all
-    , byTag = List.foldr insertByTags Dict.empty all
+    { byRef = Dict.fromList pairs
+    , byTag = List.foldr insertByTags Dict.empty pairs
     }
 
---- kanji
 viewRuby : Ruby -> Html.Html Message
 viewRuby rb =
   Html.span []
@@ -172,21 +165,6 @@ viewCounterException special =
   Html.div []
     [ viewRuby special ]
 
---- counters
-findCounterByRef : CounterStore -> String -> SearchResult
-findCounterByRef store ref =
-  case Dict.get ref store.byRef of
-    Just it -> Found [ it ]
-    Nothing -> NotFound
-
-findCounterByTag : CounterStore -> String -> SearchResult
-findCounterByTag store tag =
-  case Dict.get tag store.byTag of
-    Just it -> Found it
-    Nothing -> NotFound
-
-findCounter = findCounterByTag
-
 viewCounter : Counter -> Html.Html Message
 viewCounter counter =
   Html.ol [] (
@@ -199,76 +177,152 @@ viewCounter counter =
       (List.range 1 237)
   )
 
+findRefByRelevance : CounterIndex -> String -> Maybe (List String)
+findRefByRelevance index query =
+  let tag = query
+  in Dict.get tag index.byTag
+
+responseToDecodedCounter : Http.Response String -> Result Http.Error Counter
+responseToDecodedCounter response =
+  case response of
+    Http.BadUrl_ url           -> Err (Http.BadUrl url)
+    Http.Timeout_              -> Err Http.Timeout
+    Http.NetworkError_         -> Err Http.NetworkError
+    Http.BadStatus_ metadata _ -> Err (Http.BadStatus metadata.statusCode)
+    Http.GoodStatus_ _ body ->
+      case Json.decodeString counterDecoder body of
+        Ok value -> Ok value
+        Err err  -> Err (Http.BadBody (Json.errorToString err))
+
+refToRequestTask : String -> Task Http.Error Counter
+refToRequestTask ref =
+  Http.task
+    { method = "GET"
+    , headers = []
+    , url = "../data/" ++ ref ++ ".json" -- FIXME: this will no longer be correct when from `index.html`
+    , body = Http.emptyBody
+    , resolver = Http.stringResolver responseToDecodedCounter
+    , timeout = Nothing
+    }
+
 --- application
-type SearchResult
-  = WaitingUser
+type Page
+  = HomePage
+  | Loading
   | NotFound
   | Found (List Counter)
 
 type alias Model =
   { query : String
   , prevQuery : String
-  , current : SearchResult
-  , counters : CounterStore
+  , current : Page
+  , counters : CounterIndex
   }
 
 type Message
   = UpdateQuery String
-  | FindCounter
+  | SearchCounter --String or Query of kind
+  | GotResult (Result Http.Error (List Counter))
 
-init : Model
-init =
-  { query = ""
-  , prevQuery = ""
-  , current = WaitingUser
-  , counters = loadEveryCounters
-  }
+init : () -> (Model, Cmd Message)
+init _ =
+  ( { query = ""
+    , prevQuery = ""
+    , current = HomePage
+    , counters = counterIndex
+    }
+  , Cmd.none
+  )
 
-update : Message -> Model -> Model
+subscriptions : Model -> Sub Message
+subscriptions _ =
+    Sub.none
+
+update : Message -> Model -> (Model, Cmd Message)
 update msg model =
   case msg of
     UpdateQuery niw ->
-      { model | query = niw }
-    FindCounter ->
-      { model | current = findCounter model.counters model.query
-              , prevQuery = model.query }
+      ( { model
+        | query = niw
+        }
+      , Cmd.none
+      )
+    SearchCounter ->
+      let match = findRefByRelevance model.counters model.query
+      in case match of
+        Just list ->
+          ( { model
+            | current = Loading
+            , prevQuery = model.query
+            }
+          , list
+            |> List.map refToRequestTask -- List (Task Http.Error Counter)
+            |> Task.sequence -- Task Http.Error (List Counter)
+            |> Task.attempt GotResult -- Cmd Message
+          )
+        Nothing ->
+          ( { model
+            | current = NotFound
+            }
+          , Cmd.none
+          )
+    GotResult res ->
+      case res of
+        Ok list ->
+          ( { model
+            | current = Found list
+            }
+          , Cmd.none
+          )
+        Err _ ->
+          ( { model
+            | current = NotFound
+            }
+          , Cmd.none
+          )
 
 view : Model -> Html.Html Message
 view model =
   Html.div []
     [ Html.form
-        [ Event.onInput UpdateQuery
-        , Event.onSubmit FindCounter
+      [ Event.onInput UpdateQuery
+      , Event.onSubmit SearchCounter
+      ]
+      [ Html.input
+        [ Attr.placeholder "enter a query here"
+        , Attr.value model.query
         ]
-        [ Html.input
-            [ Attr.placeholder "enter a query here"
-            , Attr.value model.query
-            ]
-            []
-        , Html.button
-            []
-            [ Html.text "find" ]
-        ]
+        []
+      , Html.button
+        []
+        [ Html.text "find" ]
+      ]
     , Html.div [] (
         case model.current of
-          WaitingUser ->
-            []
-          NotFound ->
-            [ Html.hr [] []
-            , Html.div [] [ Html.text ("no counter found for " ++ model.prevQuery) ]
-            ]
-          Found ls ->
-            [ Html.hr [] []
-            , Html.div [] (List.map viewCounter ls)
+          HomePage -> [ Html.text "HomePage" ]
+          Loading  -> [ Html.text "Loading" ]
+          NotFound -> [ Html.text "NotFound" ]
+          Found list ->
+            [ Html.text "Found"
+            , Html.div [] (
+                List.map
+                  (\it ->
+                    Html.p [] [ Html.text (Debug.toString it) ]
+                  )
+                  list
+              )
             ]
       )
+    , Html.hr [] []
+    , Html.p [] [ Debug.toString model.counters |> Html.text ]
     ]
 
 --- entry point
 main : Program () Model Message
 main =
-  Browser.sandbox
+  Browser.element
     { init = init
-    , update = update
+    , subscriptions = subscriptions
+    , update = update --String or Query of kind
     , view = view
     }
