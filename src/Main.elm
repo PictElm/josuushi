@@ -155,6 +155,9 @@ gatherNumberWithRuby number acc =
     , ( 1000, \u -> rubyCat (gatherNumberWithRuby (u // 100) acc) (gatherNumberWithRuby (100 + modBy 100 u) acc) )
     ] (       \_ -> Ruby "error" "number too big")
 
+validateNumber : String -> Maybe Int
+validateNumber = String.toInt
+
 viewCounterRegular : Ruby -> Int -> Html.Html Message
 viewCounterRegular repr number =
   Html.div []
@@ -165,17 +168,11 @@ viewCounterException special =
   Html.div []
     [ viewRuby special ]
 
-viewCounter : Counter -> Html.Html Message
-viewCounter counter =
-  Html.ol [] (
-    List.map
-      (\n -> Html.li [] [ (
-        case Dict.get n counter.cases of
-          Just ex -> viewCounterException ex
-          Nothing -> viewCounterRegular counter.repr n
-      ) ])
-      (List.range 1 237)
-  )
+viewCounter : Counter -> Int -> Html.Html Message
+viewCounter counter n =
+  case Dict.get n counter.cases of
+    Just ex -> viewCounterException ex
+    Nothing -> viewCounterRegular counter.repr n
 
 findRefByRelevance : CounterIndex -> String -> Maybe (List String)
 findRefByRelevance index query =
@@ -205,6 +202,99 @@ refToRequestTask ref =
     , timeout = Nothing
     }
 
+viewResult : Maybe Int -> Counter -> Html.Html Message
+viewResult num counter =
+  Html.div -- .result
+    []
+    [ Html.div -- .repr
+      []
+      [ viewRuby counter.repr ]
+    , Html.div -- .info
+      []
+      [ Html.div
+        []
+        [ Html.span
+          []
+          [ Html.text (String.join ", " counter.tags) ]
+        , Html.span
+          []
+          [ case num of
+            Just n  -> viewCounter counter n
+            Nothing -> Html.text "enter a number"
+          ]
+        ]
+      , Html.details
+        []
+        [ Html.summary
+          []
+          [ Html.text "more" ]
+        , Html.div
+          []
+          [ Html.table
+            []
+            [ Html.thead
+              []
+              [ Html.tr
+                []
+                [ Html.th [] [ Html.text "*number*" ]
+                , Html.th [] [ Html.text "*kanji-writing*" ]
+                , Html.th [] [ Html.text "*kana-writing*" ]
+                ]
+              ]
+            , Html.tbody
+              []
+              [ Html.tr
+                []
+                [ Html.td [] [ Html.text "+n+" ]
+                , Html.td [] [ Html.text "+K+" ]
+                , Html.td [] [ Html.text "+k+" ]
+                ]
+              , Html.tr
+                []
+                [ Html.td [] [ Html.text "+n+" ]
+                , Html.td [] [ Html.text "+K+" ]
+                , Html.td [] [ Html.text "+k+" ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]
+
+viewHomePage : Html.Html Message
+viewHomePage =
+  Html.text "HomePage"
+
+viewLoading : Html.Html Message
+viewLoading =
+  Html.text "Loading"
+
+viewNotFound : Html.Html Message
+viewNotFound =
+  Html.text "NotFound"
+
+viewFound : Model -> List Counter -> Html.Html Message
+viewFound model list =
+  Html.div
+    []
+    [ Html.input -- #floaty-thing
+      [ Attr.placeholder "number"
+      , Attr.value model.numberInput
+      , Event.onInput UpdateNumber
+      ]
+      []
+    , Html.ol
+        []
+        (List.map
+          (\counter ->
+            Html.li
+              []
+              [ viewResult model.number counter ]
+          )
+          list)
+    ]
+
 --- application
 type Page
   = HomePage
@@ -214,20 +304,23 @@ type Page
 
 type alias Model =
   { query : String
-  , prevQuery : String
+  , numberInput : String
+  , number : Maybe Int
   , current : Page
   , counters : CounterIndex
   }
 
 type Message
   = UpdateQuery String
+  | UpdateNumber String
   | SearchCounter --String or Query of kind
   | GotResult (Result Http.Error (List Counter))
 
 init : () -> (Model, Cmd Message)
 init _ =
   ( { query = ""
-    , prevQuery = ""
+    , numberInput = ""
+    , number = Nothing
     , current = HomePage
     , counters = counterIndex
     }
@@ -247,13 +340,19 @@ update msg model =
         }
       , Cmd.none
       )
+    UpdateNumber niw ->
+      ( { model
+        | numberInput = niw
+        , number = validateNumber niw
+        }
+      , Cmd.none
+      )
     SearchCounter ->
       let match = findRefByRelevance model.counters model.query
       in case match of
         Just list ->
           ( { model
             | current = Loading
-            , prevQuery = model.query
             }
           , list
             |> List.map refToRequestTask -- List (Task Http.Error Counter)
@@ -284,12 +383,12 @@ update msg model =
 view : Model -> Html.Html Message
 view model =
   Html.div []
-    [ Html.form
+    [ Html.form -- #search-bar
       [ Event.onInput UpdateQuery
       , Event.onSubmit SearchCounter
       ]
       [ Html.input
-        [ Attr.placeholder "enter a query here"
+        [ Attr.placeholder "counter for..."
         , Attr.value model.query
         ]
         []
@@ -297,6 +396,17 @@ view model =
         []
         [ Html.text "find" ]
       ]
+    , Html.div -- #page-content
+      []
+      [ case model.current of
+        HomePage   -> viewHomePage
+        Loading    -> viewLoading
+        NotFound   -> viewNotFound
+        Found list -> viewFound model list
+      ]
+
+-- debug garbage
+    , Html.hr [] []
     , Html.div [] (
         case model.current of
           HomePage -> [ Html.text "HomePage" ]
@@ -313,7 +423,6 @@ view model =
               )
             ]
       )
-    , Html.hr [] []
     , Html.p [] [ Debug.toString model.counters |> Html.text ]
     ]
 
