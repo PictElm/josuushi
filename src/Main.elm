@@ -158,21 +158,19 @@ gatherNumberWithRuby number acc =
 validateNumber : String -> Maybe Int
 validateNumber = String.toInt
 
-viewCounterRegular : Ruby -> Int -> Html.Html Message
-viewCounterRegular repr number =
-  Html.div []
-    [ viewRuby (rubyCat (gatherNumberWithRuby number (Ruby "" "")) repr) ]
+counterToRubyException : Exception -> Ruby
+counterToRubyException special =
+  special
 
-viewCounterException : Exception -> Html.Html Message
-viewCounterException special =
-  Html.div []
-    [ viewRuby special ]
+counterToRubyRegular : Ruby -> Int -> Ruby
+counterToRubyRegular repr number =
+  (rubyCat (gatherNumberWithRuby number (Ruby "" "")) repr)
 
-viewCounter : Counter -> Int -> Html.Html Message
-viewCounter counter n =
+counterToRuby : Counter -> Int -> Ruby
+counterToRuby counter n =
   case Dict.get n counter.cases of
-    Just ex -> viewCounterException ex
-    Nothing -> viewCounterRegular counter.repr n
+    Just ex -> counterToRubyException ex
+    Nothing -> counterToRubyRegular counter.repr n
 
 findRefByRelevance : CounterIndex -> String -> Maybe (List String)
 findRefByRelevance index query =
@@ -205,12 +203,12 @@ refToRequestTask ref =
 viewResult : Maybe Int -> Counter -> Html.Html Message
 viewResult num counter =
   Html.div -- .result
-    []
+    [ Attr.class "result" ]
     [ Html.div -- .repr
-      []
+      [ Attr.class "repr" ]
       [ viewRuby counter.repr ]
     , Html.div -- .info
-      []
+      [ Attr.class "info" ]
       [ Html.div
         []
         [ Html.span
@@ -219,7 +217,7 @@ viewResult num counter =
         , Html.span
           []
           [ case num of
-            Just n  -> viewCounter counter n
+            Just n  -> viewRuby <| counterToRuby counter n
             Nothing -> Html.text "enter a number"
           ]
         ]
@@ -236,50 +234,59 @@ viewResult num counter =
               []
               [ Html.tr
                 []
-                [ Html.th [] [ Html.text "*number*" ]
-                , Html.th [] [ Html.text "*kanji-writing*" ]
-                , Html.th [] [ Html.text "*kana-writing*" ]
+                [ Html.th [] [ Html.text "number" ]
+                , Html.th [] [ Html.text "kanji writing" ]
+                , Html.th [] [ Html.text "kana writing" ]
                 ]
               ]
             , Html.tbody
               []
-              [ Html.tr
-                []
-                [ Html.td [] [ Html.text "+n+" ]
-                , Html.td [] [ Html.text "+K+" ]
-                , Html.td [] [ Html.text "+k+" ]
-                ]
-              , Html.tr
-                []
-                [ Html.td [] [ Html.text "+n+" ]
-                , Html.td [] [ Html.text "+K+" ]
-                , Html.td [] [ Html.text "+k+" ]
-                ]
-              ]
-            ]
-          ]
-        ]
-      ]
-    ]
+              <| List.map
+                (\n ->
+                  let
+                    (class, ruby) = case Dict.get n counter.cases of
+                      Just ex -> ("exception", counterToRubyException ex)
+                      Nothing -> ("regular", counterToRubyRegular counter.repr n)
+                  in
+                    Html.tr
+                      [ Attr.class class ]
+                      [ Html.td [] [ Html.text (String.fromInt n) ]
+                      , Html.td [] [ Html.text ruby.text ]
+                      , Html.td [] [ Html.text ruby.floating ]
+                      ]
+                )
+                (List.range 1 10 ++ List.filter (\n -> 10 < n) (Dict.keys counter.cases))
+            ] -- table
+          ] -- summary>div
+        ] -- summary
+      ] -- .info
+    ] -- .repr
 
 viewHomePage : Html.Html Message
 viewHomePage =
-  Html.text "HomePage"
+  Html.div
+    [ Attr.class "page-home" ]
+    [ Html.text "HomePage" ]
 
 viewLoading : Html.Html Message
 viewLoading =
-  Html.text "Loading"
+  Html.div
+    [ Attr.class "page-loading" ]
+    [ Html.text "Loading" ]
 
 viewNotFound : Html.Html Message
 viewNotFound =
-  Html.text "NotFound"
+  Html.div
+    [ Attr.class "page-not-found" ]
+    [ Html.text "NotFound" ]
 
 viewFound : Model -> List Counter -> Html.Html Message
 viewFound model list =
   Html.div
-    []
-    [ Html.input -- #floaty-thing
-      [ Attr.placeholder "number"
+    [ Attr.class "page-found" ]
+    [ Html.input -- .number-input
+      [ Attr.class "number-input"
+      , Attr.placeholder "number"
       , Attr.value model.numberInput
       , Event.onInput UpdateNumber
       ]
@@ -313,7 +320,7 @@ type alias Model =
 type Message
   = UpdateQuery String
   | UpdateNumber String
-  | SearchCounter --String or Query of kind
+  | SearchCounter
   | GotResult (Result Http.Error (List Counter))
 
 init : () -> (Model, Cmd Message)
@@ -382,9 +389,15 @@ update msg model =
 
 view : Model -> Html.Html Message
 view model =
-  Html.div []
-    [ Html.form -- #search-bar
-      [ Event.onInput UpdateQuery
+  Html.div
+    [ Attr.id "#root" ]
+    [ Html.header
+      []
+      [ Html.text "head" ]
+    , Html.form -- #search-bar
+      [ Attr.id "search-bar"
+      , Attr.autofocus True
+      , Event.onInput UpdateQuery
       , Event.onSubmit SearchCounter
       ]
       [ Html.input
@@ -397,34 +410,37 @@ view model =
         [ Html.text "find" ]
       ]
     , Html.div -- #page-content
-      []
+      [ Attr.id "page-content" ]
       [ case model.current of
         HomePage   -> viewHomePage
         Loading    -> viewLoading
         NotFound   -> viewNotFound
         Found list -> viewFound model list
       ]
-
--- debug garbage
-    , Html.hr [] []
-    , Html.div [] (
-        case model.current of
-          HomePage -> [ Html.text "HomePage" ]
-          Loading  -> [ Html.text "Loading" ]
-          NotFound -> [ Html.text "NotFound" ]
-          Found list ->
-            [ Html.text "Found"
-            , Html.div [] (
-                List.map
-                  (\it ->
-                    Html.p [] [ Html.text (Debug.toString it) ]
-                  )
-                  list
-              )
-            ]
-      )
-    , Html.p [] [ Debug.toString model.counters |> Html.text ]
+    , Html.footer
+      []
+      [ Html.text "foot" ]
     ]
+
+    -- , Html.div
+    --   [ Attr.id "garbage" ]
+    --   [ Html.hr [] []
+    --   , Html.div [] (
+    --       case model.current of
+    --         HomePage -> [ Html.text "HomePage" ]
+    --         Loading  -> [ Html.text "Loading" ]
+    --         NotFound -> [ Html.text "NotFound" ]
+    --         Found list ->
+    --           [ Html.text "Found"
+    --           , Html.div [] (
+    --               List.map
+    --                 (\it -> Html.p [] [ Html.text (Debug.toString it) ])
+    --                 list
+    --             )
+    --           ]
+    --     )
+    --   , Html.p [] [ Debug.toString model.counters |> Html.text ]
+    --   ]
 
 --- entry point
 main : Program () Model Message
