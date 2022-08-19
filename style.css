@@ -1,0 +1,100 @@
+:root {
+    --a: #242628;
+    --b: #4c565f;
+    --c: #c4c4c4;
+}
+@media (prefers-color-scheme: light) {
+    :root {
+        --a: #fafbfc;
+        --b: #5c656e;
+        --c: #09090a;
+    }
+}
+
+html {
+    background: var(--a);
+    border: var(--b);
+    color: var(--c);
+}
+
+form#search-bar {
+    text-align: center;
+}
+form#search-bar input,
+form#search-bar button {
+    font-size: 1.5em;
+}
+
+#page-content {
+    margin: 10vw 20vw;
+}
+
+.page-found .number-input {
+    position: absolute;
+    right: 20vw;
+}
+.page-found ol {
+    list-style: none;
+}
+
+.result {
+    margin-bottom: .5em;
+    border-bottom: solid 1px var(--b);
+}
+.result .repr {
+    float: left;
+    font-size: 3em;
+    width: 12%;
+    padding: .5em;
+    padding-bottom: 0em;
+}
+.result .info {
+    padding: 4em;
+    padding-bottom: 1em;
+}
+.result .computed {
+    position: absolute;
+    right: 20vw;
+    font-size: 1.5em;
+}
+.result details {
+    padding-top: 2.5em;
+}
+.result summary {
+    text-align: center;
+    cursor: pointer;
+    color: var(--b);
+}
+.result summary::marker,
+.result summary::after {
+    content: "\2b9f";
+}
+.result details[open] summary::marker,
+.result details[open] summary::after {
+    content: "\2b9d";
+}
+.result summary::before {
+    content: "more";
+}
+.result details[open] summary::before {
+    content: "less";
+}
+.result .info table {
+    width: 100%;
+    padding: .2em 1em;
+    border: solid 1px var(--b);
+    border-radius: 4px;
+    border-spacing: 0;
+}
+.result .info td {
+    border-top: solid 1px var(--b);
+}
+.result .info thead th:nth-child(1) {
+    width: 20%;
+}
+.result .info thead th:nth-child(2) {
+    width: 30%;
+}
+.result .info tr.exception {
+    font-style: italic;
+}

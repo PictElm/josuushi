@@ -172,10 +172,15 @@ counterToRuby counter n =
     Just ex -> counterToRubyException ex
     Nothing -> counterToRubyRegular counter.repr n
 
-findRefByRelevance : CounterIndex -> String -> Maybe (List String)
-findRefByRelevance index query =
-  let tag = query
-  in Dict.get tag index.byTag
+processQuery : CounterIndex -> String -> (Maybe (String, Int), Maybe (List String))
+processQuery index query =
+  let
+    num_pair = Nothing -- TODO: distinguish some kind of number in the query
+    tag = query -- TODO: potentially multiple tags, AND? OR?
+  in
+    ( num_pair
+    , Dict.get tag index.byTag
+    )
 
 responseToDecodedCounter : Http.Response String -> Result Http.Error Counter
 responseToDecodedCounter response =
@@ -194,7 +199,7 @@ refToRequestTask ref =
   Http.task
     { method = "GET"
     , headers = []
-    , url = "../data/" ++ ref ++ ".json" -- FIXME: this will no longer be correct when from `index.html`
+    , url = "data/" ++ ref ++ ".json"
     , body = Http.emptyBody
     , resolver = Http.stringResolver responseToDecodedCounter
     , timeout = Nothing
@@ -202,20 +207,20 @@ refToRequestTask ref =
 
 viewResult : Maybe Int -> Counter -> Html.Html Message
 viewResult num counter =
-  Html.div -- .result
+  Html.div
     [ Attr.class "result" ]
-    [ Html.div -- .repr
+    [ Html.div
       [ Attr.class "repr" ]
       [ viewRuby counter.repr ]
-    , Html.div -- .info
+    , Html.div
       [ Attr.class "info" ]
       [ Html.div
         []
         [ Html.span
-          []
+          [ Attr.class "tags" ]
           [ Html.text (String.join ", " counter.tags) ]
         , Html.span
-          []
+          [ Attr.class "computed" ]
           [ case num of
             Just n  -> viewRuby <| counterToRuby counter n
             Nothing -> Html.text "enter a number"
@@ -225,7 +230,7 @@ viewResult num counter =
         []
         [ Html.summary
           []
-          [ Html.text "more" ]
+          []
         , Html.div
           []
           [ Html.table
@@ -235,8 +240,8 @@ viewResult num counter =
               [ Html.tr
                 []
                 [ Html.th [] [ Html.text "number" ]
-                , Html.th [] [ Html.text "kanji writing" ]
-                , Html.th [] [ Html.text "kana writing" ]
+                , Html.th [] [ Html.text "writing" ]
+                , Html.th [] [ Html.text "reading" ]
                 ]
               ]
             , Html.tbody
@@ -284,7 +289,7 @@ viewFound : Model -> List Counter -> Html.Html Message
 viewFound model list =
   Html.div
     [ Attr.class "page-found" ]
-    [ Html.input -- .number-input
+    [ Html.input
       [ Attr.class "number-input"
       , Attr.placeholder "number"
       , Attr.value model.numberInput
@@ -300,7 +305,7 @@ viewFound model list =
               [ viewResult model.number counter ]
           )
           list)
-    ]
+    ] -- .number-input
 
 --- application
 type Page
@@ -355,10 +360,18 @@ update msg model =
       , Cmd.none
       )
     SearchCounter ->
-      let match = findRefByRelevance model.counters model.query
+      let
+        (number, match) = processQuery model.counters model.query
+        model_wnum = case number of
+          Just (str, num) ->
+            { model
+            | numberInput = str
+            , number = Just num
+            }
+          Nothing -> model
       in case match of
         Just list ->
-          ( { model
+          ( { model_wnum
             | current = Loading
             }
           , list
@@ -394,7 +407,7 @@ view model =
     [ Html.header
       []
       [ Html.text "head" ]
-    , Html.form -- #search-bar
+    , Html.form
       [ Attr.id "search-bar"
       , Attr.autofocus True
       , Event.onInput UpdateQuery
@@ -408,39 +421,19 @@ view model =
       , Html.button
         []
         [ Html.text "find" ]
-      ]
-    , Html.div -- #page-content
+      ] -- #search-bar
+    , Html.div
       [ Attr.id "page-content" ]
       [ case model.current of
         HomePage   -> viewHomePage
         Loading    -> viewLoading
         NotFound   -> viewNotFound
         Found list -> viewFound model list
-      ]
+      ] -- #page-content
     , Html.footer
       []
       [ Html.text "foot" ]
-    ]
-
-    -- , Html.div
-    --   [ Attr.id "garbage" ]
-    --   [ Html.hr [] []
-    --   , Html.div [] (
-    --       case model.current of
-    --         HomePage -> [ Html.text "HomePage" ]
-    --         Loading  -> [ Html.text "Loading" ]
-    --         NotFound -> [ Html.text "NotFound" ]
-    --         Found list ->
-    --           [ Html.text "Found"
-    --           , Html.div [] (
-    --               List.map
-    --                 (\it -> Html.p [] [ Html.text (Debug.toString it) ])
-    --                 list
-    --             )
-    --           ]
-    --     )
-    --   , Html.p [] [ Debug.toString model.counters |> Html.text ]
-    --   ]
+    ] -- #root
 
 --- entry point
 main : Program () Model Message
@@ -448,6 +441,6 @@ main =
   Browser.element
     { init = init
     , subscriptions = subscriptions
-    , update = update --String or Query of kind
+    , update = update
     , view = view
     }
