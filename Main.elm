@@ -76,13 +76,18 @@ insertByTags (ref, tags) acc =
     acc
     tags
 
-counterIndex : CounterIndex
-counterIndex =
+counterIndexDecoder : Json.Decoder (List (String, List String))
+counterIndexDecoder =
+  Json.list
+    <| Json.map2 Tuple.pair
+      (Json.index 0 Json.string)
+      (Json.index 1 (Json.list Json.string))
+
+counterIndex : String -> CounterIndex
+counterIndex json =
   let
-    pairs =
-      [ ("nichi", ["day", "days", "time"])
-      , ("ko", ["place holder", "plho", "da"])
-      ]
+    pairs = Json.decodeString counterIndexDecoder json
+      |> Result.withDefault []
   in
     { byRef = Dict.fromList pairs
     , byTag = List.foldr insertByTags Dict.empty pairs
@@ -328,13 +333,13 @@ type Message
   | SearchCounter
   | GotResult (Result Http.Error (List Counter))
 
-init : () -> (Model, Cmd Message)
-init _ =
+init : String -> (Model, Cmd Message)
+init jsonCounterIndex =
   ( { query = ""
     , numberInput = ""
     , number = Nothing
     , current = HomePage
-    , counters = counterIndex
+    , counters = counterIndex jsonCounterIndex
     }
   , Cmd.none
   )
@@ -436,7 +441,7 @@ view model =
     ] -- #root
 
 --- entry point
-main : Program () Model Message
+main : Program String Model Message
 main =
   Browser.element
     { init = init

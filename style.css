@@ -2,12 +2,16 @@
     --a: #242628;
     --b: #4c565f;
     --c: #c4c4c4;
+    --d: #5187b8;
+    --e: #ff7171;
 }
 @media (prefers-color-scheme: light) {
     :root {
         --a: #fafbfc;
         --b: #5c656e;
         --c: #09090a;
+        --d: #2c6496;
+        --e: #d21515;
     }
 }
 
@@ -23,6 +27,23 @@ form#search-bar {
 form#search-bar input,
 form#search-bar button {
     font-size: 1.5em;
+    border: solid 3px var(--b);
+}
+form#search-bar input {
+    border-radius: .5em 0 0 .5em;
+    border-right: none;
+    padding-left: .3em;
+}
+form#search-bar button {
+    border-radius: 0 .5em .5em 0;
+    border-left: none;
+    overflow: hidden;
+    max-width: 1.7em;
+}
+form#search-bar button::before {
+    content: '\1f50d\a0\a0\a0';
+    /*content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42'%3E%3Cpath d='...' stroke='%2300F' stroke-width='5'/%3E%3C/svg%3E");
+    /* YYY: emoji good enough */
 }
 
 #page-content {
@@ -67,17 +88,17 @@ form#search-bar button {
 }
 .result summary::marker,
 .result summary::after {
-    content: "\2b9f";
+    content: '\2b9f';
 }
 .result details[open] summary::marker,
 .result details[open] summary::after {
-    content: "\2b9d";
+    content: '\2b9d';
 }
 .result summary::before {
-    content: "more";
+    content: 'more';
 }
 .result details[open] summary::before {
-    content: "less";
+    content: 'less';
 }
 .result .info table {
     width: 100%;
@@ -89,12 +110,15 @@ form#search-bar button {
 .result .info td {
     border-top: solid 1px var(--b);
 }
-.result .info thead th:nth-child(1) {
+.result .info th:nth-child(1) {
     width: 20%;
 }
-.result .info thead th:nth-child(2) {
+.result .info th:nth-child(2) {
     width: 30%;
 }
 .result .info tr.exception {
-    font-style: italic;
+    /*font-style: italic;
+    /* XXX: simply changing color not good,
+       but not sure what else to do... */
+    color: var(--e);
 }
