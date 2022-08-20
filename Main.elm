@@ -8,6 +8,8 @@ import Html.Attributes as Attr
 import Html.Events as Event
 import Http
 import Json.Decode as Json
+import Regex exposing (Regex)
+import Set
 import Task exposing (Task)
 
 type alias Ruby =
@@ -177,14 +179,49 @@ counterToRuby counter n =
     Just ex -> counterToRubyException ex
     Nothing -> counterToRubyRegular counter.repr n
 
-processQuery : CounterIndex -> String -> (Maybe (String, Int), Maybe (List String))
-processQuery index query =
+kanji_numbers_ : String
+kanji_numbers_ = "一二三四五六七八九十百"
+kanjiToInt : String -> Maybe Int
+kanjiToInt c =
+  Just -1 -- TODO
+parseInt : String -> Maybe Int
+parseInt c =
+  let f = String.left 1 c
+  in if String.contains f kanji_numbers_
+    then kanjiToInt c
+    else String.toInt (if String.contains f "0123456789"
+      then c
+      else c |> String.map (\k -> Char.toCode k |> (+) -65248 |> Char.fromCode)) -- ord('０')-ord('0')
+rx_number_ : Regex
+rx_number_ = Regex.fromString ("^.*?[0-9]+|[" ++ kanji_numbers_ ++ "]+|[０-９]+") |> Maybe.withDefault Regex.never
+rx_tag_ : Regex
+rx_tag_ = Regex.fromString "[A-Za-z]+|[一-龯]|[ぁ-んァ-ン]+" |> Maybe.withDefault Regex.never
+parseQuery : String -> (Maybe (String, Int), List String)
+parseQuery q =
   let
-    num_pair = Nothing -- TODO: distinguish some kind of number in the query
-    tag = query -- TODO: potentially multiple tags, AND? OR?
+    (str, num) = case Regex.findAtMost 1 rx_number_ q of
+      head :: _ -> (head.match, parseInt head.match)
+      []        -> ("", Nothing)
+    qq = String.dropLeft (String.length str) q
+  in
+    ( num |> Maybe.map (Tuple.pair str)
+    , Regex.find rx_tag_ qq |> List.map .match
+    )
+
+processQuery : CounterIndex -> String -> (Maybe (String, Int), List String)
+processQuery index query =
+  let (num_pair, tags) = parseQuery query
   in
     ( num_pair
-    , Dict.get tag index.byTag
+    , if List.isEmpty tags
+      then [ "ko" ] -- YYY: default when no counter (hm...)
+      else List.foldr
+        (\tag -> \set ->
+          Dict.get tag index.byTag
+            |> Maybe.withDefault []
+            |> Set.fromList
+            |> Set.union set
+        ) Set.empty tags |> Set.toList
     )
 
 responseToDecodedCounter : Http.Response String -> Result Http.Error Counter
@@ -366,7 +403,7 @@ update msg model =
       )
     SearchCounter ->
       let
-        (number, match) = processQuery model.counters model.query
+        (number, list) = processQuery model.counters model.query
         model_wnum = case number of
           Just (str, num) ->
             { model
@@ -374,22 +411,15 @@ update msg model =
             , number = Just num
             }
           Nothing -> model
-      in case match of
-        Just list ->
-          ( { model_wnum
-            | current = Loading
-            }
-          , list
-            |> List.map refToRequestTask -- List (Task Http.Error Counter)
-            |> Task.sequence -- Task Http.Error (List Counter)
-            |> Task.attempt GotResult -- Cmd Message
-          )
-        Nothing ->
-          ( { model
-            | current = NotFound
-            }
-          , Cmd.none
-          )
+      in
+        ( { model_wnum
+          | current = Loading
+          }
+        , list
+          |> List.map refToRequestTask -- List (Task Http.Error Counter)
+          |> Task.sequence -- Task Http.Error (List Counter)
+          |> Task.attempt GotResult -- Cmd Message
+        )
     GotResult res ->
       case res of
         Ok list ->
