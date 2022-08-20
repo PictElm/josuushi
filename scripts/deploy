@@ -1,0 +1,11 @@
+#!/bin/sh -ex
+test -z "`git status --porcelain`"
+cd "`git rev-parse --show-toplevel`"
+
+scripts/build
+
+git checkout --no-guess ${1:-deploy}
+git pull
+git add main.js
+git commit --amend --no-edit
+git push
