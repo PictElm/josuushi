@@ -16,7 +16,7 @@ type alias Ruby =
   , floating : String
   }
 
-type alias Exception = Ruby
+type alias Exception = Ruby -- YYY: usl?
 
 type alias Counter =
   { repr : {-List-} Ruby -- kanji and reading for the counter
@@ -103,7 +103,7 @@ viewRuby rb =
       (\it ->
         Html.ruby []
           [ Html.text rb.text
-          , Html.rp [] [ Html.text "(" ]
+          , Html.rp [] [ Html.text "" ] -- XXX: it should have an openning parenthesis here, but when it does double-clicking the main ruby text also comprises it which is very annoying and not expected behavior; what sane browser nowaday does not fully support the ruby element anyway?!
           , Html.rt [] [ Html.text it ]
           , Html.rp [] [ Html.text ")" ]
           ]
@@ -122,11 +122,12 @@ ifBelow u below above =
     Nothing ->
       above u
 
-one_nine_ex_ : Dict Int Ruby
-one_nine_ex_ =
+one_nine_ : Dict Int Ruby
+one_nine_ =
   Dict.fromList
     --[ (0, Ruby "零" "れい") -- YYY: (hm...)
-    [ (1, Ruby "一" "いち")
+    [ (0, Ruby "" "")
+    , (1, Ruby "一" "いち")
     , (2, Ruby "二" "に")
     , (3, Ruby "三" "さん")
     , (4, Ruby "四" "よん")
@@ -164,57 +165,81 @@ trillion_ : Ruby
 trillion_ = Ruby "兆" "ちょう"
 one_trillion_ : Ruby
 one_trillion_ = Ruby "一兆" "いっちょう"
-gatherNumberWithRuby : Int -> Ruby -- into a list of
-gatherNumberWithRuby number =
-  case Dict.get number one_nine_ex_ of
-    Just it -> it -- TODO: sneak exceptions in there when needed
-    Nothing -> ifBelow number
-      [ ( 11,  \_ -> ten_ ) -- may need to move back to the dictonary (see above TODO)
-      , ( 20,  \u -> rubyCat [                                ten_, gatherNumberWithRuby (modBy 10 u)] )
-      , ( 100, \u -> rubyCat [gatherNumberWithRuby (u // 10), ten_, gatherNumberWithRuby (modBy 10 u)] )
-      --
-      , ( 101,  \_ -> hundred_ )
-      , ( 200,  \u -> rubyCat [                                 hundred_, gatherNumberWithRuby (modBy 100 u)] )
-      , ( 300,  \u -> rubyCat [gatherNumberWithRuby (u // 100), hundred_, gatherNumberWithRuby (modBy 100 u)] )
-      , ( 400,  \u -> rubyCat [                           three_bundred_, gatherNumberWithRuby (modBy 100 u)] )
-      , ( 600,  \u -> rubyCat [gatherNumberWithRuby (u // 100), hundred_, gatherNumberWithRuby (modBy 100 u)] )
-      , ( 700,  \u -> rubyCat [                             six_pundred_, gatherNumberWithRuby (modBy 100 u)] )
-      , ( 800,  \u -> rubyCat [gatherNumberWithRuby (u // 100), hundred_, gatherNumberWithRuby (modBy 100 u)] )
-      , ( 900,  \u -> rubyCat [                           eight_pundred_, gatherNumberWithRuby (modBy 100 u)] )
-      , ( 1000, \u -> rubyCat [gatherNumberWithRuby (u // 100), hundred_, gatherNumberWithRuby (modBy 100 u)] )
-      --
-      , ( 1001,  \_ -> thousand_ )
-      , ( 2000,  \u -> rubyCat [                                  thousand_, gatherNumberWithRuby (modBy 1000 u)] )
-      , ( 3000,  \u -> rubyCat [gatherNumberWithRuby (u // 1000), thousand_, gatherNumberWithRuby (modBy 1000 u)] )
-      , ( 4000,  \u -> rubyCat [                             three_zousand_, gatherNumberWithRuby (modBy 1000 u)] )
-      , ( 8000,  \u -> rubyCat [gatherNumberWithRuby (u // 1000), thousand_, gatherNumberWithRuby (modBy 1000 u)] )
-      , ( 9000,  \u -> rubyCat [                            eight_thousand_, gatherNumberWithRuby (modBy 1000 u)] )
-      , ( 10000, \u -> rubyCat [gatherNumberWithRuby (u // 1000), thousand_, gatherNumberWithRuby (modBy 1000 u)] )
-      --
-      , ( 10001,     \_ -> one_tenthousand_ )
-      , ( 100000000, \u -> rubyCat [gatherNumberWithRuby (u // 10000), tenthousand_, gatherNumberWithRuby (modBy 10000 u)] )
-      --
-      , ( 100000001,     \_ -> one_hundredmillion_ )
-      , ( 1000000000000, \u -> rubyCat [gatherNumberWithRuby (u // 100000000), hundredmillion_, gatherNumberWithRuby (modBy 100000000 u)] )
-      --
-      , ( 1000000000001,     \_ -> one_trillion_ )
-      , ( 10000000000000000, \u -> rubyCat [gatherNumberWithRuby (u // 1000000000000), trillion_, gatherNumberWithRuby (modBy 1000000000000 u)] )
-      --
-      ] (\_ -> Ruby "全部の" "ぜんぶの") -- YYY: or 沢山 or idk (hm...)
+gatherCounterWithRuby : Int -> Dict Int Ruby -> Ruby -> Ruby -- into a list of
+gatherCounterWithRuby number cases repr =
+  let
+    recu n may_tail = (
+      let
+        _ = Debug.log "in" { number=n, may_tail=may_tail } -- XXX: seeing some unknown recursions from nowhere :/ [9, 7, 5, 2]
+        special = if may_tail then Dict.get n cases else Nothing
+        tailing = if may_tail then \w -> rubyCat [w, repr] else identity
+        rubyCatWithTailing = (\l -> \o -> \k ->
+            if 0 == k && may_tail
+              then
+                let ex = Dict.get o cases |> Maybe.map List.singleton
+                in rubyCat (case l of
+                    [b]      -> ex |> Maybe.withDefault [b, repr]
+                    a :: [b] -> a :: (ex |> Maybe.withDefault [b, repr])
+                    _        -> [] -- unreachable
+                  ) -- working with Lists in elm is...
+              else rubyCat (l ++ [recu k may_tail])
+          )
+      in case special of
+        Just ex -> ex -- special cases already contains the counter's repr
+        Nothing -> case Dict.get n one_nine_ of
+          Just it -> tailing it
+          Nothing -> ifBelow n
+            [ ( 11,  \_ -> tailing ten_ )
+            , ( 20,  \u -> rubyCatWithTailing [                      ten_] 10 (modBy 10 u) )
+            , ( 100, \u -> rubyCatWithTailing [recu (u // 10) False, ten_] 10 (modBy 10 u) )
+            --
+            , ( 101,  \_ -> tailing hundred_ )
+            , ( 200,  \u -> rubyCatWithTailing [                       hundred_] 100 (modBy 100 u) )
+            , ( 300,  \u -> rubyCatWithTailing [recu (u // 100) False, hundred_] 100 (modBy 100 u) )
+            , ( 400,  \u -> rubyCatWithTailing [                 three_bundred_] 300 (modBy 100 u) )
+            , ( 600,  \u -> rubyCatWithTailing [recu (u // 100) False, hundred_] 100 (modBy 100 u) )
+            , ( 700,  \u -> rubyCatWithTailing [                   six_pundred_] 600 (modBy 100 u) )
+            , ( 800,  \u -> rubyCatWithTailing [recu (u // 100) False, hundred_] 100 (modBy 100 u) )
+            , ( 900,  \u -> rubyCatWithTailing [                 eight_pundred_] 800 (modBy 100 u) )
+            , ( 1000, \u -> rubyCatWithTailing [recu (u // 100) False, hundred_] 100 (modBy 100 u) )
+            --
+            , ( 1001,  \_ -> tailing thousand_ )
+            , ( 2000,  \u -> rubyCatWithTailing [                        thousand_] 1000 (modBy 1000 u) )
+            , ( 3000,  \u -> rubyCatWithTailing [recu (u // 1000) False, thousand_] 1000 (modBy 1000 u) )
+            , ( 4000,  \u -> rubyCatWithTailing [                   three_zousand_] 3000 (modBy 1000 u) )
+            , ( 8000,  \u -> rubyCatWithTailing [recu (u // 1000) False, thousand_] 1000 (modBy 1000 u) )
+            , ( 9000,  \u -> rubyCatWithTailing [                  eight_thousand_] 8000 (modBy 1000 u) )
+            , ( 10000, \u -> rubyCatWithTailing [recu (u // 1000) False, thousand_] 1000 (modBy 1000 u) )
+            --
+            , ( 10001,     \_ -> tailing one_tenthousand_ )
+            , ( 100000000, \u -> rubyCatWithTailing [recu (u // 10000) False, tenthousand_] 10000 (modBy 10000 u) )
+            --
+            , ( 100000001,     \_ -> tailing one_hundredmillion_ )
+            , ( 1000000000000, \u -> rubyCatWithTailing [recu (u // 100000000) False, hundredmillion_] 100000000 (modBy 100000000 u) )
+            --
+            , ( 1000000000001,     \_ -> tailing one_trillion_ )
+            , ( 10000000000000000, \u -> rubyCatWithTailing [recu (u // 1000000000000) False, trillion_] 1000000000000 (modBy 1000000000000 u) )
+            --
+            ] (\_ -> Ruby "全部の" "ぜんぶの") -- YYY: or 沢山 or idk (hm...)
+      )
+  in recu number True
 
 counterToRubyException : Exception -> Ruby
 counterToRubyException special =
   special
 
-counterToRubyRegular : Ruby -> Int -> Ruby
-counterToRubyRegular repr number =
-  rubyCat [gatherNumberWithRuby number, repr]
+counterToRubyRegular : Counter -> Int -> Ruby
+counterToRubyRegular counter number =
+  gatherCounterWithRuby number counter.cases counter.repr
 
 counterToRuby : Counter -> Int -> Ruby
 counterToRuby counter n =
-  case Dict.get n counter.cases of
-    Just ex -> counterToRubyException ex
-    Nothing -> counterToRubyRegular counter.repr n
+  case Dict.get -n counter.cases of
+    Just exact_ex -> counterToRubyException exact_ex
+    Nothing ->
+      case Dict.get n counter.cases of
+        Just generic_ex -> counterToRubyException generic_ex
+        Nothing -> counterToRubyRegular counter n
 
 kanji_digits_ : Dict Char Int
 kanji_digits_ =
@@ -364,7 +389,7 @@ viewResult num counter =
                   let
                     (class, ruby) = case Dict.get n counter.cases of
                       Just ex -> ("exception", counterToRubyException ex)
-                      Nothing -> ("regular", counterToRubyRegular counter.repr n)
+                      Nothing -> ("regular", counterToRubyRegular counter n)
                   in
                     Html.tr
                       [ Attr.class class ]
