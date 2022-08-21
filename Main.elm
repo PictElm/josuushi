@@ -1,6 +1,5 @@
 module Main exposing (main)
 
-import Array exposing (Array)
 import Browser
 import Dict exposing (Dict)
 import Html
@@ -30,11 +29,13 @@ type alias CounterIndex =
   , byTag : Dict String (List String) -- tag -> refs
   }
 
-rubyCat : Ruby -> Ruby -> Ruby
-rubyCat a b =
-  Ruby
-    (a.text ++ b.text)
-    (a.floating ++ b.floating)
+rubyCat : List Ruby -> Ruby
+rubyCat l =
+  List.foldl (\b -> \a ->
+    Ruby
+      (a.text ++ b.text)
+      (a.floating ++ b.floating)
+  ) (Ruby "" "") l
 
 rubyFromList : List String -> Ruby
 rubyFromList list =
@@ -121,6 +122,22 @@ ifBelow u below above =
     Nothing ->
       above u
 
+one_nine_ex_ : Dict Int Ruby
+one_nine_ex_ =
+  Dict.fromList
+    --[ (0, Ruby "零" "れい") -- YYY: (hm...)
+    [ (1, Ruby "一" "いち")
+    , (2, Ruby "二" "に")
+    , (3, Ruby "三" "さん")
+    , (4, Ruby "四" "よん")
+    , (5, Ruby "五" "ご")
+    , (6, Ruby "六" "ろく")
+    , (7, Ruby "七" "なな")
+    , (8, Ruby "八" "はち")
+    , (9, Ruby "九" "きゅう")
+    ]
+ten_ : Ruby
+ten_ = Ruby "十" "じゅう"
 hundred_ : Ruby
 hundred_ = Ruby "百" "ひゃく"
 three_bundred_ : Ruby
@@ -129,41 +146,61 @@ six_pundred_ : Ruby
 six_pundred_ = Ruby "六百" "ろっぴゃく"
 eight_pundred_ : Ruby
 eight_pundred_ = Ruby "八百" "はっぴゃく"
-ten_ : Ruby
-ten_ = Ruby "十" "じゅう"
-one_ten_ : Array Ruby
-one_ten_ =
-  Array.fromList
-    [ Ruby "一" "いち"
-    , Ruby "二" "に"
-    , Ruby "三" "さん"
-    , Ruby "四" "よん"
-    , Ruby "五" "ご"
-    , Ruby "六" "ろく"
-    , Ruby "七" "なな"
-    , Ruby "八" "はち"
-    , Ruby "九" "きゅう"
-    , ten_
-    ]
-gatherNumberWithRuby : Int -> Ruby -> Ruby -- into a list of
-gatherNumberWithRuby number acc =
-  ifBelow number
-    [ ( 11,   \u -> Array.get (u - 1) one_ten_ |> Maybe.withDefault (Ruby "error" "unreachable") )
-    , ( 20,   \u -> rubyCat ten_                                  (gatherNumberWithRuby (modBy 10 u) acc) )
-    , ( 100,  \u -> rubyCat (gatherNumberWithRuby (u // 10) acc)  (gatherNumberWithRuby (10 + modBy 10 u) acc) )
-    , ( 101,  \_ -> hundred_ )
-    , ( 200,  \u -> rubyCat hundred_                              (gatherNumberWithRuby (modBy 100 u) acc) )
-    , ( 300,  \u -> rubyCat (gatherNumberWithRuby (u // 100) acc) (gatherNumberWithRuby (100 + modBy 100 u) acc) )
-    , ( 400,  \u -> rubyCat three_bundred_                        (gatherNumberWithRuby (100 + modBy 100 u) acc) )
-    , ( 600,  \u -> rubyCat (gatherNumberWithRuby (u // 100) acc) (gatherNumberWithRuby (100 + modBy 100 u) acc) )
-    , ( 700,  \u -> rubyCat six_pundred_                          (gatherNumberWithRuby (100 + modBy 100 u) acc) )
-    , ( 800,  \u -> rubyCat (gatherNumberWithRuby (u // 100) acc) (gatherNumberWithRuby (100 + modBy 100 u) acc) )
-    , ( 900,  \u -> rubyCat eight_pundred_                        (gatherNumberWithRuby (100 + modBy 100 u) acc) )
-    , ( 1000, \u -> rubyCat (gatherNumberWithRuby (u // 100) acc) (gatherNumberWithRuby (100 + modBy 100 u) acc) )
-    ] (       \_ -> Ruby "error" "number too big")
-
-validateNumber : String -> Maybe Int
-validateNumber = String.toInt
+thousand_ : Ruby
+thousand_ = Ruby "千" "せん"
+three_zousand_ : Ruby
+three_zousand_ = Ruby "三千" "さんぜん"
+eight_thousand_ : Ruby
+eight_thousand_ = Ruby "八千" "はっせん"
+tenthousand_ : Ruby
+tenthousand_ = Ruby "万" "まん"
+one_tenthousand_ : Ruby
+one_tenthousand_ = Ruby "一万" "いちまん"
+hundredmillion_ : Ruby
+hundredmillion_ = Ruby "億" "おく"
+one_hundredmillion_ : Ruby
+one_hundredmillion_ = Ruby "一億" "いちおく"
+trillion_ : Ruby
+trillion_ = Ruby "兆" "ちょう"
+one_trillion_ : Ruby
+one_trillion_ = Ruby "一兆" "いっちょう"
+gatherNumberWithRuby : Int -> Ruby -- into a list of
+gatherNumberWithRuby number =
+  case Dict.get number one_nine_ex_ of
+    Just it -> it -- TODO: sneak exceptions in there when needed
+    Nothing -> ifBelow number
+      [ ( 11,  \_ -> ten_ ) -- may need to move back to the dictonary (see above TODO)
+      , ( 20,  \u -> rubyCat [                                ten_, gatherNumberWithRuby (modBy 10 u)] )
+      , ( 100, \u -> rubyCat [gatherNumberWithRuby (u // 10), ten_, gatherNumberWithRuby (modBy 10 u)] )
+      --
+      , ( 101,  \_ -> hundred_ )
+      , ( 200,  \u -> rubyCat [                                 hundred_, gatherNumberWithRuby (modBy 100 u)] )
+      , ( 300,  \u -> rubyCat [gatherNumberWithRuby (u // 100), hundred_, gatherNumberWithRuby (modBy 100 u)] )
+      , ( 400,  \u -> rubyCat [                           three_bundred_, gatherNumberWithRuby (modBy 100 u)] )
+      , ( 600,  \u -> rubyCat [gatherNumberWithRuby (u // 100), hundred_, gatherNumberWithRuby (modBy 100 u)] )
+      , ( 700,  \u -> rubyCat [                             six_pundred_, gatherNumberWithRuby (modBy 100 u)] )
+      , ( 800,  \u -> rubyCat [gatherNumberWithRuby (u // 100), hundred_, gatherNumberWithRuby (modBy 100 u)] )
+      , ( 900,  \u -> rubyCat [                           eight_pundred_, gatherNumberWithRuby (modBy 100 u)] )
+      , ( 1000, \u -> rubyCat [gatherNumberWithRuby (u // 100), hundred_, gatherNumberWithRuby (modBy 100 u)] )
+      --
+      , ( 1001,  \_ -> thousand_ )
+      , ( 2000,  \u -> rubyCat [                                  thousand_, gatherNumberWithRuby (modBy 1000 u)] )
+      , ( 3000,  \u -> rubyCat [gatherNumberWithRuby (u // 1000), thousand_, gatherNumberWithRuby (modBy 1000 u)] )
+      , ( 4000,  \u -> rubyCat [                             three_zousand_, gatherNumberWithRuby (modBy 1000 u)] )
+      , ( 8000,  \u -> rubyCat [gatherNumberWithRuby (u // 1000), thousand_, gatherNumberWithRuby (modBy 1000 u)] )
+      , ( 9000,  \u -> rubyCat [                            eight_thousand_, gatherNumberWithRuby (modBy 1000 u)] )
+      , ( 10000, \u -> rubyCat [gatherNumberWithRuby (u // 1000), thousand_, gatherNumberWithRuby (modBy 1000 u)] )
+      --
+      , ( 10001,     \_ -> one_tenthousand_ )
+      , ( 100000000, \u -> rubyCat [gatherNumberWithRuby (u // 10000), tenthousand_, gatherNumberWithRuby (modBy 10000 u)] )
+      --
+      , ( 100000001,     \_ -> one_hundredmillion_ )
+      , ( 1000000000000, \u -> rubyCat [gatherNumberWithRuby (u // 100000000), hundredmillion_, gatherNumberWithRuby (modBy 100000000 u)] )
+      --
+      , ( 1000000000001,     \_ -> one_trillion_ )
+      , ( 10000000000000000, \u -> rubyCat [gatherNumberWithRuby (u // 1000000000000), trillion_, gatherNumberWithRuby (modBy 1000000000000 u)] )
+      --
+      ] (\_ -> Ruby "全部の" "ぜんぶの") -- YYY: or 沢山 or idk (hm...)
 
 counterToRubyException : Exception -> Ruby
 counterToRubyException special =
@@ -171,7 +208,7 @@ counterToRubyException special =
 
 counterToRubyRegular : Ruby -> Int -> Ruby
 counterToRubyRegular repr number =
-  (rubyCat (gatherNumberWithRuby number (Ruby "" "")) repr)
+  rubyCat [gatherNumberWithRuby number, repr]
 
 counterToRuby : Counter -> Int -> Ruby
 counterToRuby counter n =
@@ -179,33 +216,67 @@ counterToRuby counter n =
     Just ex -> counterToRubyException ex
     Nothing -> counterToRubyRegular counter.repr n
 
-kanji_numbers_ : String
-kanji_numbers_ = "一二三四五六七八九十百"
+kanji_digits_ : Dict Char Int
+kanji_digits_ =
+  Dict.fromList
+    [ ('一', 1)
+    , ('二', 2)
+    , ('三', 3)
+    , ('四', 4)
+    , ('五', 5)
+    , ('六', 6)
+    , ('七', 7)
+    , ('八', 8)
+    , ('九', 9)
+    ]
+kanji_tens_ : Dict Char Int
+kanji_tens_ =
+  Dict.fromList
+    [ ('十', 10)
+    , ('百', 100)
+    , ('千', 1000)
+    , ('万', 10000)
+    , ('億', 100000000)
+    , ('兆', 1000000000000)
+    ]
+kanji_numerals_ : String
+kanji_numerals_ = String.fromList (Dict.keys kanji_digits_ ++ Dict.keys kanji_tens_)
 kanjiToInt : String -> Maybe Int
 kanjiToInt c =
-  Just -1 -- TODO
+  Just (
+    String.toList c
+      |> List.foldl (\k -> \acc ->
+          case Dict.get k kanji_digits_ of
+            Just v  -> acc + v
+            Nothing ->
+              (if 0 == acc then 1 else acc)
+              * (Dict.get k kanji_tens_ |> Maybe.withDefault 0)
+              -- YYY: not found is not implemented (number too big)
+        ) 0
+  )
 parseInt : String -> Maybe Int
 parseInt c =
   let f = String.left 1 c
-  in if String.contains f kanji_numbers_
+  in if String.contains f kanji_numerals_
     then kanjiToInt c
     else String.toInt (if String.contains f "0123456789"
       then c
       else c |> String.map (\k -> Char.toCode k |> (+) -65248 |> Char.fromCode)) -- ord('０')-ord('0')
 rx_number_ : Regex
-rx_number_ = Regex.fromString ("^.*?[0-9]+|[" ++ kanji_numbers_ ++ "]+|[０-９]+") |> Maybe.withDefault Regex.never
+rx_number_ = Regex.fromString ("^.*?[0-9]+|[" ++ kanji_numerals_ ++ "]+|[０-９]+") |> Maybe.withDefault Regex.never
 rx_tag_ : Regex
 rx_tag_ = Regex.fromString "[A-Za-z]+|[一-龯]|[ぁ-んァ-ン]+" |> Maybe.withDefault Regex.never
 parseQuery : String -> (Maybe (String, Int), List String)
 parseQuery q =
   let
-    (str, num) = case Regex.findAtMost 1 rx_number_ q of
+    qq = String.filter (\k -> not <| List.member k [' ', ',', '_', '　', '，']) q
+    (str, num) = case Regex.findAtMost 1 rx_number_ qq of
       head :: _ -> (head.match, parseInt head.match)
       []        -> ("", Nothing)
-    qq = String.dropLeft (String.length str) q
+    qqq = String.dropLeft (String.length str) qq
   in
     ( num |> Maybe.map (Tuple.pair str)
-    , Regex.find rx_tag_ qq |> List.map .match
+    , Regex.find rx_tag_ qqq |> List.map .match
     )
 
 processQuery : CounterIndex -> String -> (Maybe (String, Int), List String)
@@ -332,7 +403,7 @@ viewFound model list =
   Html.div
     [ Attr.class "page-found" ]
     [ Html.input
-      [ Attr.class "number-input"
+      [ Attr.id "number-input"
       , Attr.placeholder "number"
       , Attr.value model.numberInput
       , Event.onInput UpdateNumber
@@ -397,7 +468,9 @@ update msg model =
     UpdateNumber niw ->
       ( { model
         | numberInput = niw
-        , number = validateNumber niw
+        , number = parseQuery niw
+          |> Tuple.first
+          |> Maybe.map Tuple.second
         }
       , Cmd.none
       )
