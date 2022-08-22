@@ -1,11 +1,27 @@
 #!/bin/sh -ex
+not_deployed='.gitignore Main.elm README.md elm.json scripts/'
+build_result='main.js'
+
 test -z "`git status --porcelain`"
 cd "`git rev-parse --show-toplevel`"
+from=`git branch --show-current`
 
 scripts/build
 
+git add -f $build_result
+git stash push $build_result
+
 git checkout --no-guess ${1:-deploy}
-git pull
-git add main.js
+#git pull
+
+git merge $from --no-ff || (
+  git rm -r --ignore-unmatch $not_deployed
+  git commit
+)
+
+git rm -r --ignore-unmatch $build_result
+git stash pop
 git commit --amend --no-edit
-git push
+
+#git push
+#git checkout $from

@@ -267,7 +267,7 @@ kanji_tens_ =
 kanji_numerals_ : String
 kanji_numerals_ = String.fromList (Dict.keys kanji_digits_ ++ Dict.keys kanji_tens_)
 kanjiToInt : String -> Maybe Int
-kanjiToInt c =
+kanjiToInt c = -- TODO/FIXME: this is all wrong
   Just (
     String.toList c
       |> List.foldl (\k -> \acc ->
