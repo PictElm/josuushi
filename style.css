@@ -50,7 +50,7 @@ form#search-bar button::before {
     margin: 10vw 20vw;
 }
 
-.page-found .number-input {
+.page-found #number-input {
     position: absolute;
     right: 20vw;
 }
