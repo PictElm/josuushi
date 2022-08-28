@@ -476,7 +476,7 @@ viewFound model list =
               [ viewResult model.number counter ]
           )
           list)
-    ] -- .number-input
+    ] -- #number-input
 
 --- application
 type Page
