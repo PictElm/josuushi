@@ -170,7 +170,7 @@ gatherCounterWithRuby number cases repr =
   let
     recu n may_tail = (
       let
-        _ = Debug.log "in" { number=n, may_tail=may_tail } -- XXX: seeing some unknown recursions from nowhere :/ [9, 7, 5, 2]
+        -- _ = Debug.log "in" { number=n, may_tail=may_tail } -- XXX: seeing some unknown recursions from nowhere :/ [9, 7, 5, 2]
         special = if may_tail then Dict.get n cases else Nothing
         tailing = if may_tail then \w -> rubyCat [w, repr] else identity
         rubyCatWithTailing = (\l -> \o -> \k ->
@@ -260,25 +260,82 @@ kanji_tens_ =
     [ ('十', 10)
     , ('百', 100)
     , ('千', 1000)
-    , ('万', 10000)
+    ]
+kanji_tenthousands_ : Dict Char Int
+kanji_tenthousands_ =
+  Dict.fromList
+    [ ('万', 10000)
     , ('億', 100000000)
     , ('兆', 1000000000000)
     ]
 kanji_numerals_ : String
-kanji_numerals_ = String.fromList (Dict.keys kanji_digits_ ++ Dict.keys kanji_tens_)
+kanji_numerals_ =
+  String.fromList
+    (  Dict.keys kanji_digits_
+    ++ Dict.keys kanji_tens_
+    ++ Dict.keys kanji_tenthousands_
+    )
+
+nextDigitValue : List Char -> Maybe (Int, List Char)
+nextDigitValue l =
+  case l of
+    -- TODO: with kanji_digits_
+    '一' :: t -> Just (1, t)
+    '二' :: t -> Just (2, t)
+    '三' :: t -> Just (3, t)
+    '四' :: t -> Just (4, t)
+    '五' :: t -> Just (5, t)
+    '六' :: t -> Just (6, t)
+    '七' :: t -> Just (7, t)
+    '八' :: t -> Just (8, t)
+    '九' :: t -> Just (9, t)
+    _ -> Just (1, l)
+    -- -- TODO: with kanji_tens_
+    -- '十' :: _ -> Just (1, l)
+    -- '百' :: _ -> Just (1, l)
+    -- '千' :: _ -> Just (1, l)
+    -- '万' :: _ -> Just (1, l)
+    -- '億' :: _ -> Just (1, l)
+    -- '兆' :: _ -> Just (1, l)
+    -- _ -> Nothing
+
+nextTensValue : List Char -> Maybe (Int, List Char)
+nextTensValue l =
+  let
+    multByAndRecurse : Int -> (Int, List Char) -> Maybe (Int, List Char)
+    multByAndRecurse = \x -> \(a, l2) -> nextTensValue l2 |> Maybe.map (Tuple.mapFirst ((+) (a*x)))
+  in case l of
+    -- TODO: with kanji_tens_
+    '十' :: t -> nextDigitValue t |> Maybe.andThen (multByAndRecurse 10)
+    '百' :: t -> nextDigitValue t |> Maybe.andThen (multByAndRecurse 100)
+    '千' :: t -> nextDigitValue t |> Maybe.andThen (multByAndRecurse 1000)
+    [] -> Just (0, [])
+    -- TODO: with kanji_tenthousands_
+    '万' :: _ -> Just (0, l)
+    '億' :: _ -> Just (0, l)
+    '兆' :: _ -> Just (0, l)
+    t -> nextDigitValue t |> Maybe.andThen (multByAndRecurse 1)
+
+nextTenthousandsValue : List Char -> Maybe (Int, List Char)
+nextTenthousandsValue l =
+  let
+    f : Int -> (Int, List Char) -> Maybe (Int, List Char)
+    f = \x -> \(a, l2) -> nextTenthousandsValue l2 |> Maybe.map (Tuple.mapFirst ((+) (a*x)))
+  in case l of
+    -- TODO: with kanji_tenthousands_
+    '万' :: t -> nextTensValue t |> Maybe.andThen (f 10000)
+    '億' :: t -> nextTensValue t |> Maybe.andThen (f 100000000)
+    '兆' :: t -> nextTensValue t |> Maybe.andThen (f 1000000000000)
+    [] -> Just (0, [])
+    _ -> nextTensValue l |> Maybe.andThen (f 1)
+
 kanjiToInt : String -> Maybe Int
-kanjiToInt c = -- TODO/FIXME: this is all wrong
-  Just (
-    String.toList c
-      |> List.foldl (\k -> \acc ->
-          case Dict.get k kanji_digits_ of
-            Just v  -> acc + v
-            Nothing ->
-              (if 0 == acc then 1 else acc)
-              * (Dict.get k kanji_tens_ |> Maybe.withDefault 0)
-              -- YYY: not found is not implemented (number too big)
-        ) 0
-  )
+kanjiToInt c = -- YYY: does not catch incorrect input, sad
+  String.toList c
+    |> List.reverse
+    |> nextTenthousandsValue
+    |> Maybe.map Tuple.first
+
 parseInt : String -> Maybe Int
 parseInt c =
   let f = String.left 1 c
@@ -287,6 +344,7 @@ parseInt c =
     else String.toInt (if String.contains f "0123456789"
       then c
       else c |> String.map (\k -> Char.toCode k |> (+) -65248 |> Char.fromCode)) -- ord('０')-ord('0')
+
 rx_number_ : Regex
 rx_number_ = Regex.fromString ("^.*?[0-9]+|[" ++ kanji_numerals_ ++ "]+|[０-９]+") |> Maybe.withDefault Regex.never
 rx_tag_ : Regex
