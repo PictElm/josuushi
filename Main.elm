@@ -279,58 +279,33 @@ kanji_numerals_ =
 nextDigitValue : List Char -> Maybe (Int, List Char)
 nextDigitValue l =
   case l of
-    -- TODO: with kanji_digits_
-    '一' :: t -> Just (1, t)
-    '二' :: t -> Just (2, t)
-    '三' :: t -> Just (3, t)
-    '四' :: t -> Just (4, t)
-    '五' :: t -> Just (5, t)
-    '六' :: t -> Just (6, t)
-    '七' :: t -> Just (7, t)
-    '八' :: t -> Just (8, t)
-    '九' :: t -> Just (9, t)
-    _ -> Just (1, l)
-    -- -- TODO: with kanji_tens_
-    -- '十' :: _ -> Just (1, l)
-    -- '百' :: _ -> Just (1, l)
-    -- '千' :: _ -> Just (1, l)
-    -- '万' :: _ -> Just (1, l)
-    -- '億' :: _ -> Just (1, l)
-    -- '兆' :: _ -> Just (1, l)
-    -- _ -> Nothing
+    h :: t -> case Dict.get h kanji_digits_ of
+      Just v  -> Just (v, t)
+      Nothing -> Just (1, l)
+    []     -> Just (1, [])
 
 nextTensValue : List Char -> Maybe (Int, List Char)
 nextTensValue l =
-  let
-    multByAndRecurse : Int -> (Int, List Char) -> Maybe (Int, List Char)
-    multByAndRecurse = \x -> \(a, l2) -> nextTensValue l2 |> Maybe.map (Tuple.mapFirst ((+) (a*x)))
+  let multByAndRecurse = \x -> \(a, l2) -> nextTensValue l2 |> Maybe.map (Tuple.mapFirst ((+) (a*x)))
   in case l of
-    -- TODO: with kanji_tens_
-    '十' :: t -> nextDigitValue t |> Maybe.andThen (multByAndRecurse 10)
-    '百' :: t -> nextDigitValue t |> Maybe.andThen (multByAndRecurse 100)
-    '千' :: t -> nextDigitValue t |> Maybe.andThen (multByAndRecurse 1000)
-    [] -> Just (0, [])
-    -- TODO: with kanji_tenthousands_
-    '万' :: _ -> Just (0, l)
-    '億' :: _ -> Just (0, l)
-    '兆' :: _ -> Just (0, l)
-    t -> nextDigitValue t |> Maybe.andThen (multByAndRecurse 1)
+    h :: t -> case Dict.get h kanji_tens_ of
+      Just v  -> nextDigitValue t |> Maybe.andThen (multByAndRecurse v)
+      Nothing -> if Dict.member h kanji_tenthousands_
+        then Just (0, l)
+        else nextDigitValue l |> Maybe.andThen (multByAndRecurse 1)
+    []     -> Just (0, [])
 
 nextTenthousandsValue : List Char -> Maybe (Int, List Char)
 nextTenthousandsValue l =
-  let
-    f : Int -> (Int, List Char) -> Maybe (Int, List Char)
-    f = \x -> \(a, l2) -> nextTenthousandsValue l2 |> Maybe.map (Tuple.mapFirst ((+) (a*x)))
+  let multByAndRecurse = \x -> \(a, l2) -> nextTenthousandsValue l2 |> Maybe.map (Tuple.mapFirst ((+) (a*x)))
   in case l of
-    -- TODO: with kanji_tenthousands_
-    '万' :: t -> nextTensValue t |> Maybe.andThen (f 10000)
-    '億' :: t -> nextTensValue t |> Maybe.andThen (f 100000000)
-    '兆' :: t -> nextTensValue t |> Maybe.andThen (f 1000000000000)
-    [] -> Just (0, [])
-    _ -> nextTensValue l |> Maybe.andThen (f 1)
+    h :: t -> case Dict.get h kanji_tenthousands_ of
+      Just v  -> nextTensValue t |> Maybe.andThen (multByAndRecurse v)
+      Nothing -> nextTensValue l |> Maybe.andThen (multByAndRecurse 1)
+    []     -> Just (0, [])
 
 kanjiToInt : String -> Maybe Int
-kanjiToInt c = -- YYY: does not catch incorrect input, sad
+kanjiToInt c = -- YYY: does not catch incorrect input, sad (garbage in, garbage out)
   String.toList c
     |> List.reverse
     |> nextTenthousandsValue
