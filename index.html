@@ -13,12 +13,14 @@
     </script>
   </head>
   <body>
-    <div id="app"></div>
-    <script>
-      var app = Elm.Main.init({
+    <script id="app">
+      Elm.Main.init({
         node: document.getElementById('app'),
-        flags: document.getElementById('data').text
-      });
+        flags: [
+          document.getElementById('data').text,
+          localStorage.getItem('josuushi.user.theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light")
+        ]
+      }).ports.setStorage.subscribe(localStorage.setItem.bind(localStorage, 'josuushi.user.theme'));
     </script>
   </body>
 </html>

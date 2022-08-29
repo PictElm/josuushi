@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Dict exposing (Dict)
@@ -491,6 +491,7 @@ type alias Model =
   , number : Maybe Int
   , current : Page
   , counters : CounterIndex
+  , theme : String
   }
 
 type Message
@@ -498,14 +499,18 @@ type Message
   | UpdateNumber String
   | SearchCounter
   | GotResult (Result Http.Error (List Counter))
+  | ChangeTheme
 
-init : String -> (Model, Cmd Message)
-init jsonCounterIndex =
+port setStorage : String -> Cmd msg
+
+init : (String, String) -> (Model, Cmd Message)
+init (jsonCounterIndex, theme) =
   ( { query = ""
     , numberInput = ""
     , number = Nothing
     , current = HomePage
     , counters = counterIndex jsonCounterIndex
+    , theme = theme
     }
   , Cmd.none
   )
@@ -565,14 +570,32 @@ update msg model =
             }
           , Cmd.none
           )
+    ChangeTheme ->
+      let
+        niwTheme = case model.theme of
+          "dark"  -> "light"
+          "light" -> "dark"
+          _       -> ""
+      in
+        ( { model
+          | theme = niwTheme
+          }
+        , setStorage niwTheme
+        )
 
 view : Model -> Html.Html Message
 view model =
   Html.div
-    [ Attr.id "#root" ]
+    [ Attr.id "root"
+    , Attr.class model.theme
+    ]
     [ Html.header
       []
-      [ Html.text "head" ]
+      [ Html.text "head"
+      , Html.button
+        [ Event.onClick ChangeTheme ]
+        [ Html.text "change theme" ]
+      ]
     , Html.form
       [ Attr.id "search-bar"
       , Attr.autofocus True
@@ -602,7 +625,7 @@ view model =
     ] -- #root
 
 --- entry point
-main : Program String Model Message
+main : Program (String, String) Model Message
 main =
   Browser.element
     { init = init

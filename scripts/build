@@ -1,20 +1,21 @@
 #!/bin/sh -ex
 cd "`git rev-parse --show-toplevel`"
 
-if ! command -v elm >/dev/null
+ver=0.19.1
+elm=`command -v elm || echo elm-stuff/$ver/elm`
+if ! test -x "$elm"
   then
-    curl -L https://github.com/elm/compiler/releases/download/0.19.1/binary-for-linux-64-bit.gz | gunzip >elm
-    chmod +x elm
-    elm() { ./elm "$@"; }
+    mkdir -p elm-stuff/$ver
+    curl -L https://github.com/elm/compiler/releases/download/$ver/binary-for-linux-64-bit.gz | gunzip >elm-stuff/$ver/elm
+    chmod +x elm-stuff/$ver/elm
 fi
 
-elm make Main.elm --optimize --output=tmp.js
+"$elm" make Main.elm --optimize --output=tmp.js
 
 if command -v uglifyjs >/dev/null
   then uglifyjs tmp.js --compress pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe | uglifyjs --mangle --output main.js
   else cp tmp.js main.js
 fi
 
-echo "optimized: `wc -c tmp.js`
-minified:  `wc -c main.js`"
+printf 'optimized: %7d%.s bytes\nminified:  %7d%.s bytes\n%.s%.s' `wc -c tmp.js main.js`
 rm tmp.js
