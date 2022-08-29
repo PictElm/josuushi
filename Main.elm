@@ -1,5 +1,6 @@
 port module Main exposing (main)
 
+import BigInt exposing (BigInt)
 import Browser
 import Dict exposing (Dict)
 import Html
@@ -10,6 +11,22 @@ import Json.Decode as Json
 import Regex exposing (Regex)
 import Set
 import Task exposing (Task)
+
+type alias AnInt = BigInt
+anInt : Int -> AnInt
+anInt = BigInt.fromInt
+anIntFromString : String -> Maybe AnInt
+anIntFromString = BigInt.fromIntString
+anIntToString : AnInt -> String
+anIntToString = BigInt.toString
+addAnInt : AnInt -> AnInt -> AnInt
+addAnInt = BigInt.add
+mulAnInt : AnInt -> AnInt -> AnInt
+mulAnInt = BigInt.mul
+ltAnInt : AnInt -> AnInt -> Bool
+ltAnInt = BigInt.lt
+divmodAnInt : AnInt -> AnInt -> Maybe (AnInt, AnInt)
+divmodAnInt = BigInt.divmod
 
 type alias Ruby =
   { text : String
@@ -110,17 +127,17 @@ viewRuby rb =
       )
       (String.split "/" rb.floating)
 
-ifBelow : Int -> List (Int, Int -> a) -> (Int -> a) -> a
-ifBelow u below above =
+ifBelow : AnInt -> List (AnInt, AnInt -> a) -> (AnInt -> a) -> a
+ifBelow an below above =
   case List.head below of
     Just it ->
-      if u < Tuple.first it
-        then Tuple.second it <| u
-        else ifBelow u
+      if ltAnInt an (Tuple.first it)
+        then Tuple.second it <| an
+        else ifBelow an
           (List.tail below |> Maybe.withDefault [])
           above
     Nothing ->
-      above u
+      above an
 
 one_nine_ : Dict Int Ruby
 one_nine_ =
@@ -165,16 +182,17 @@ trillion_ : Ruby
 trillion_ = Ruby "兆" "ちょう"
 one_trillion_ : Ruby
 one_trillion_ = Ruby "一兆" "いっちょう"
-gatherCounterWithRuby : Int -> Dict Int Ruby -> Ruby -> Ruby -- into a list of
+gatherCounterWithRuby : AnInt -> Dict Int Ruby -> Ruby -> Ruby -- into a list of
 gatherCounterWithRuby number cases repr =
   let
-    recu n may_tail = (
+    recu : AnInt -> Bool -> Ruby
+    recu an may_tail = (
       let
-        -- _ = Debug.log "in" { number=n, may_tail=may_tail } -- XXX: seeing some unknown recursions from nowhere :/ [9, 7, 5, 2]
+        n = String.toInt (anIntToString an) |> Maybe.withDefault 0
         special = if may_tail then Dict.get n cases else Nothing
         tailing = if may_tail then \w -> rubyCat [w, repr] else identity
-        rubyCatWithTailing = (\l -> \o -> \k ->
-            if 0 == k && may_tail
+        rubyCatWithTailing = (\o -> \k -> \l ->
+            if (anInt 0) == k && may_tail
               then
                 let ex = Dict.get o cases |> Maybe.map List.singleton
                 in rubyCat (case l of
@@ -184,41 +202,49 @@ gatherCounterWithRuby number cases repr =
                   ) -- working with Lists in elm is...
               else rubyCat (l ++ [recu k may_tail])
           )
+        namingIsHard = (\anExactValue -> \aPowOfTen -> \itsRuby -> \itContainsItsDigit -> \u ->
+            let (div, mod) = divmodAnInt u (anInt aPowOfTen) |> Maybe.withDefault (anInt 0, anInt 0) -- YYY: than even reachable?
+            in rubyCatWithTailing anExactValue mod (
+              if itContainsItsDigit
+                then [                itsRuby]
+                else [recu div False, itsRuby]
+              )
+          )
       in case special of
         Just ex -> ex -- special cases already contains the counter's repr
         Nothing -> case Dict.get n one_nine_ of
           Just it -> tailing it
-          Nothing -> ifBelow n
-            [ ( 11,  \_ -> tailing ten_ )
-            , ( 20,  \u -> rubyCatWithTailing [                      ten_] 10 (modBy 10 u) )
-            , ( 100, \u -> rubyCatWithTailing [recu (u // 10) False, ten_] 10 (modBy 10 u) )
+          Nothing -> ifBelow an
+            [ ( anInt 11,  \_ -> tailing ten_ )
+            , ( anInt 20,  \u -> namingIsHard 10 10 ten_ True  u )
+            , ( anInt 100, \u -> namingIsHard 10 10 ten_ False u )
             --
-            , ( 101,  \_ -> tailing hundred_ )
-            , ( 200,  \u -> rubyCatWithTailing [                       hundred_] 100 (modBy 100 u) )
-            , ( 300,  \u -> rubyCatWithTailing [recu (u // 100) False, hundred_] 100 (modBy 100 u) )
-            , ( 400,  \u -> rubyCatWithTailing [                 three_bundred_] 300 (modBy 100 u) )
-            , ( 600,  \u -> rubyCatWithTailing [recu (u // 100) False, hundred_] 100 (modBy 100 u) )
-            , ( 700,  \u -> rubyCatWithTailing [                   six_pundred_] 600 (modBy 100 u) )
-            , ( 800,  \u -> rubyCatWithTailing [recu (u // 100) False, hundred_] 100 (modBy 100 u) )
-            , ( 900,  \u -> rubyCatWithTailing [                 eight_pundred_] 800 (modBy 100 u) )
-            , ( 1000, \u -> rubyCatWithTailing [recu (u // 100) False, hundred_] 100 (modBy 100 u) )
+            , ( anInt 101,  \_ -> tailing hundred_ )
+            , ( anInt 200,  \u -> namingIsHard 100 100       hundred_ True  u )
+            , ( anInt 300,  \u -> namingIsHard 100 100       hundred_ False u )
+            , ( anInt 400,  \u -> namingIsHard 300 100 three_bundred_ True  u )
+            , ( anInt 600,  \u -> namingIsHard 100 100       hundred_ False u )
+            , ( anInt 700,  \u -> namingIsHard 600 100   six_pundred_ True  u )
+            , ( anInt 800,  \u -> namingIsHard 100 100       hundred_ False u )
+            , ( anInt 900,  \u -> namingIsHard 800 100 eight_pundred_ True  u )
+            , ( anInt 1000, \u -> namingIsHard 100 100       hundred_ False u )
             --
-            , ( 1001,  \_ -> tailing thousand_ )
-            , ( 2000,  \u -> rubyCatWithTailing [                        thousand_] 1000 (modBy 1000 u) )
-            , ( 3000,  \u -> rubyCatWithTailing [recu (u // 1000) False, thousand_] 1000 (modBy 1000 u) )
-            , ( 4000,  \u -> rubyCatWithTailing [                   three_zousand_] 3000 (modBy 1000 u) )
-            , ( 8000,  \u -> rubyCatWithTailing [recu (u // 1000) False, thousand_] 1000 (modBy 1000 u) )
-            , ( 9000,  \u -> rubyCatWithTailing [                  eight_thousand_] 8000 (modBy 1000 u) )
-            , ( 10000, \u -> rubyCatWithTailing [recu (u // 1000) False, thousand_] 1000 (modBy 1000 u) )
+            , ( anInt 1001,  \_ -> tailing thousand_ )
+            , ( anInt 2000,  \u -> namingIsHard 1000 1000       thousand_ True  u )
+            , ( anInt 3000,  \u -> namingIsHard 1000 1000       thousand_ False u )
+            , ( anInt 4000,  \u -> namingIsHard 3000 1000  three_zousand_ True  u )
+            , ( anInt 8000,  \u -> namingIsHard 1000 1000       thousand_ False u )
+            , ( anInt 9000,  \u -> namingIsHard 8000 1000 eight_thousand_ True  u )
+            , ( anInt 10000, \u -> namingIsHard 1000 1000       thousand_ False u )
             --
-            , ( 10001,     \_ -> tailing one_tenthousand_ )
-            , ( 100000000, \u -> rubyCatWithTailing [recu (u // 10000) False, tenthousand_] 10000 (modBy 10000 u) )
+            , ( anInt 10001,     \_ -> tailing one_tenthousand_ )
+            , ( anInt 100000000, \u -> namingIsHard 10000 10000 tenthousand_ False u )
             --
-            , ( 100000001,     \_ -> tailing one_hundredmillion_ )
-            , ( 1000000000000, \u -> rubyCatWithTailing [recu (u // 100000000) False, hundredmillion_] 100000000 (modBy 100000000 u) )
+            , ( anInt 100000001,     \_ -> tailing one_hundredmillion_ )
+            , ( anInt 1000000000000, \u -> namingIsHard 100000000 100000000 hundredmillion_ False u )
             --
-            , ( 1000000000001,     \_ -> tailing one_trillion_ )
-            , ( 10000000000000000, \u -> rubyCatWithTailing [recu (u // 1000000000000) False, trillion_] 1000000000000 (modBy 1000000000000 u) )
+            , ( anInt 1000000000001,     \_ -> tailing one_trillion_ )
+            , ( anInt 10000000000000000, \u -> namingIsHard 1000000000000 1000000000000 trillion_ False u )
             --
             ] (\_ -> Ruby "全部の" "ぜんぶの") -- YYY: or 沢山 or idk (hm...)
       )
@@ -228,45 +254,46 @@ counterToRubyException : Exception -> Ruby
 counterToRubyException special =
   special
 
-counterToRubyRegular : Counter -> Int -> Ruby
+counterToRubyRegular : Counter -> AnInt -> Ruby
 counterToRubyRegular counter number =
   gatherCounterWithRuby number counter.cases counter.repr
 
-counterToRuby : Counter -> Int -> Ruby
-counterToRuby counter n =
-  case Dict.get -n counter.cases of
+counterToRuby : Counter -> AnInt -> Ruby
+counterToRuby counter an =
+  let n = String.toInt (anIntToString an) |> Maybe.withDefault 0
+  in case Dict.get -n counter.cases of
     Just exact_ex -> counterToRubyException exact_ex
     Nothing ->
       case Dict.get n counter.cases of
         Just generic_ex -> counterToRubyException generic_ex
-        Nothing -> counterToRubyRegular counter n
+        Nothing -> counterToRubyRegular counter an
 
-kanji_digits_ : Dict Char Int
+kanji_digits_ : Dict Char AnInt
 kanji_digits_ =
   Dict.fromList
-    [ ('一', 1)
-    , ('二', 2)
-    , ('三', 3)
-    , ('四', 4)
-    , ('五', 5)
-    , ('六', 6)
-    , ('七', 7)
-    , ('八', 8)
-    , ('九', 9)
+    [ ('一', anInt 1)
+    , ('二', anInt 2)
+    , ('三', anInt 3)
+    , ('四', anInt 4)
+    , ('五', anInt 5)
+    , ('六', anInt 6)
+    , ('七', anInt 7)
+    , ('八', anInt 8)
+    , ('九', anInt 9)
     ]
-kanji_tens_ : Dict Char Int
+kanji_tens_ : Dict Char AnInt
 kanji_tens_ =
   Dict.fromList
-    [ ('十', 10)
-    , ('百', 100)
-    , ('千', 1000)
+    [ ('十', anInt 10)
+    , ('百', anInt 100)
+    , ('千', anInt 1000)
     ]
-kanji_tenthousands_ : Dict Char Int
+kanji_tenthousands_ : Dict Char AnInt
 kanji_tenthousands_ =
   Dict.fromList
-    [ ('万', 10000)
-    , ('億', 100000000)
-    , ('兆', 1000000000000)
+    [ ('万', anInt 10000)
+    , ('億', anInt 100000000)
+    , ('兆', anInt 1000000000000)
     ]
 kanji_numerals_ : String
 kanji_numerals_ =
@@ -276,47 +303,47 @@ kanji_numerals_ =
     ++ Dict.keys kanji_tenthousands_
     )
 
-nextDigitValue : List Char -> Maybe (Int, List Char)
+nextDigitValue : List Char -> Maybe (AnInt, List Char)
 nextDigitValue l =
   case l of
     h :: t -> case Dict.get h kanji_digits_ of
       Just v  -> Just (v, t)
-      Nothing -> Just (1, l)
-    []     -> Just (1, [])
+      Nothing -> Just (anInt 1, l)
+    []     -> Just (anInt 1, [])
 
-nextTensValue : List Char -> Maybe (Int, List Char)
+nextTensValue : List Char -> Maybe (AnInt, List Char)
 nextTensValue l =
-  let multByAndRecurse = \x -> \(a, l2) -> nextTensValue l2 |> Maybe.map (Tuple.mapFirst ((+) (a*x)))
+  let multByAndRecurse = \x -> \(a, l2) -> nextTensValue l2 |> Maybe.map (Tuple.mapFirst (addAnInt (mulAnInt a x)))
   in case l of
     h :: t -> case Dict.get h kanji_tens_ of
       Just v  -> nextDigitValue t |> Maybe.andThen (multByAndRecurse v)
       Nothing -> if Dict.member h kanji_tenthousands_
-        then Just (0, l)
-        else nextDigitValue l |> Maybe.andThen (multByAndRecurse 1)
-    []     -> Just (0, [])
+        then Just (anInt 0, l)
+        else nextDigitValue l |> Maybe.andThen (multByAndRecurse (anInt 1))
+    []     -> Just (anInt 0, [])
 
-nextTenthousandsValue : List Char -> Maybe (Int, List Char)
+nextTenthousandsValue : List Char -> Maybe (AnInt, List Char)
 nextTenthousandsValue l =
-  let multByAndRecurse = \x -> \(a, l2) -> nextTenthousandsValue l2 |> Maybe.map (Tuple.mapFirst ((+) (a*x)))
+  let multByAndRecurse = \x -> \(a, l2) -> nextTenthousandsValue l2 |> Maybe.map (Tuple.mapFirst (addAnInt (mulAnInt a x)))
   in case l of
     h :: t -> case Dict.get h kanji_tenthousands_ of
       Just v  -> nextTensValue t |> Maybe.andThen (multByAndRecurse v)
-      Nothing -> nextTensValue l |> Maybe.andThen (multByAndRecurse 1)
-    []     -> Just (0, [])
+      Nothing -> nextTensValue l |> Maybe.andThen (multByAndRecurse (anInt 1))
+    []     -> Just (anInt 0, [])
 
-kanjiToInt : String -> Maybe Int
+kanjiToInt : String -> Maybe AnInt
 kanjiToInt c = -- YYY: does not catch incorrect input, sad (garbage in, garbage out)
   String.toList c
     |> List.reverse
     |> nextTenthousandsValue
     |> Maybe.map Tuple.first
 
-parseInt : String -> Maybe Int
+parseInt : String -> Maybe AnInt
 parseInt c =
   let f = String.left 1 c
   in if String.contains f kanji_numerals_
     then kanjiToInt c
-    else String.toInt (if String.contains f "0123456789"
+    else anIntFromString (if String.contains f "0123456789"
       then c
       else c |> String.map (\k -> Char.toCode k |> (+) -65248 |> Char.fromCode)) -- ord('０')-ord('0')
 
@@ -324,7 +351,7 @@ rx_number_ : Regex
 rx_number_ = Regex.fromString ("^.*?[0-9]+|[" ++ kanji_numerals_ ++ "]+|[０-９]+") |> Maybe.withDefault Regex.never
 rx_tag_ : Regex
 rx_tag_ = Regex.fromString "[A-Za-z]+|[一-龯]|[ぁ-んァ-ン]+" |> Maybe.withDefault Regex.never
-parseQuery : String -> (Maybe (String, Int), List String)
+parseQuery : String -> (Maybe (String, AnInt), List String)
 parseQuery q =
   let
     qq = String.filter (\k -> not <| List.member k [' ', ',', '_', '　', '，']) q
@@ -337,7 +364,7 @@ parseQuery q =
     , Regex.find rx_tag_ qqq |> List.map .match
     )
 
-processQuery : CounterIndex -> String -> (Maybe (String, Int), List String)
+processQuery : CounterIndex -> String -> (Maybe (String, AnInt), List String)
 processQuery index query =
   let (num_pair, tags) = parseQuery query
   in
@@ -376,7 +403,7 @@ refToRequestTask ref =
     , timeout = Nothing
     }
 
-viewResult : Maybe Int -> Counter -> Html.Html Message
+viewResult : Maybe AnInt -> Counter -> Html.Html Message
 viewResult num counter =
   Html.div
     [ Attr.class "result" ]
@@ -422,7 +449,7 @@ viewResult num counter =
                   let
                     (class, ruby) = case Dict.get n counter.cases of
                       Just ex -> ("exception", counterToRubyException ex)
-                      Nothing -> ("regular", counterToRubyRegular counter n)
+                      Nothing -> ("regular", counterToRubyRegular counter (anInt n))
                   in
                     Html.tr
                       [ Attr.class class ]
@@ -488,7 +515,7 @@ type Page
 type alias Model =
   { query : String
   , numberInput : String
-  , number : Maybe Int
+  , number : Maybe AnInt
   , current : Page
   , counters : CounterIndex
   , theme : String
