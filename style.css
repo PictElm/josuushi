@@ -38,15 +38,17 @@
     }
 }
 
-body {
+html, body {
     margin: 0;
+    padding: 0;
+    height: 100%;
 }
 #root {
     background: var(--a);
     border: var(--b);
     color: var(--c);
-    width: 100vw;
-    height: 100vh;
+    height: auto;
+    min-height: 100vh;
 }
 
 form#search-bar {
