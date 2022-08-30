@@ -8,7 +8,6 @@
 * (everything better)
 
 ## misc
-* search url (eg. `?q=blabla`)
 * filename pattern for data/*.json (multiple counters can have the same reading)
 * bigger numbers
   - [elm-bigint](https://package.elm-lang.org/packages/cmditch/elm-bigint/latest/) (only when needed?)

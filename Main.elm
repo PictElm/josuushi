@@ -519,9 +519,9 @@ type Message
 
 port setStorage : String -> Cmd msg
 
-init : (String, String) -> (Model, Cmd Message)
-init (jsonCounterIndex, theme) =
-  ( { query = ""
+init : (String, String, String) -> (Model, Cmd Message)
+init (jsonCounterIndex, urlQuery, theme) =
+  ( { query = urlQuery
     , numberInput = ""
     , number = Nothing
     , current = HomePage
@@ -529,7 +529,9 @@ init (jsonCounterIndex, theme) =
     , counters = counterIndex jsonCounterIndex
     , theme = theme
     }
-  , Cmd.none
+  , if "" == urlQuery
+    then Cmd.none
+    else Task.perform (always SearchCounter) (Task.succeed 0)
   )
 
 subscriptions : Model -> Sub Message
@@ -669,7 +671,7 @@ view model =
     ] -- #root
 
 --- entry point
-main : Program (String, String) Model Message
+main : Program (String, String, String) Model Message
 main =
   Browser.element
     { init = init
