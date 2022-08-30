@@ -101,7 +101,7 @@ form#search-bar button::before {
 }
 .result .info {
     padding: 4em;
-    padding-bottom: 1em;
+    padding-bottom: 0.5em;
 }
 .result .computed {
     position: absolute;
@@ -109,26 +109,28 @@ form#search-bar button::before {
     font-size: 1.5em;
 }
 .result details {
-    padding-top: 2.5em;
+    padding-top: 1.5em;
 }
 .result summary {
+    padding: 1em;
     text-align: center;
+    font-family: monospace;
     cursor: pointer;
     color: var(--b);
 }
 .result summary::marker,
 .result summary::after {
-    content: '\2b9f';
+    content: '\25bc';
 }
 .result details[open] summary::marker,
 .result details[open] summary::after {
-    content: '\2b9d';
+    content: '\25b2';
 }
 .result summary::before {
-    content: 'more';
+    content: ' more ';
 }
 .result details[open] summary::before {
-    content: 'less';
+    content: ' less ';
 }
 .result .info table {
     width: 100%;
