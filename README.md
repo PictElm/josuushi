@@ -16,5 +16,10 @@ Example:
 $ serve &
 ```
 
+## Some Resources Used
+
+- [Tae Kim - Numbers and Counting](http://guidetojapanese.org/learn/grammar/numbers)
+- [American / Japanese Higher Numbers](https://www.trussel.com/jnumbers.htm)
+
 ---
 > I don't even know if that's the right word for it

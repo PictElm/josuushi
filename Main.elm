@@ -17,6 +17,8 @@ anInt : Int -> AnInt
 anInt = BigInt.fromInt
 anIntFromString : String -> Maybe AnInt
 anIntFromString = BigInt.fromIntString
+anIntFromKnownString : String -> AnInt
+anIntFromKnownString = BigInt.fromIntString >> Maybe.withDefault (anInt 0)
 anIntToString : AnInt -> String
 anIntToString = BigInt.toString
 addAnInt : AnInt -> AnInt -> AnInt
@@ -182,6 +184,14 @@ trillion_ : Ruby
 trillion_ = Ruby "兆" "ちょう"
 one_trillion_ : Ruby
 one_trillion_ = Ruby "一兆" "いっちょう"
+tenquadrillion_ : Ruby
+tenquadrillion_ = Ruby "京" "けい"
+one_tenquadrillion_ : Ruby
+one_tenquadrillion_ = Ruby "一京" "いっけい"
+hundredquintillion_ : Ruby
+hundredquintillion_ = Ruby "垓" "がい"
+one_hundredquintillion_ : Ruby
+one_hundredquintillion_ = Ruby "一垓" "いちがい"
 gatherCounterWithRuby : AnInt -> Dict Int Ruby -> Ruby -> Ruby -- into a list of
 gatherCounterWithRuby number cases repr =
   let
@@ -190,9 +200,10 @@ gatherCounterWithRuby number cases repr =
       let
         n = String.toInt (anIntToString an) |> Maybe.withDefault 0
         special = if may_tail then Dict.get n cases else Nothing
-        tailing = if may_tail then \w -> rubyCat [w, repr] else identity
-        rubyCatWithTailing = (\o -> \k -> \l ->
-            if (anInt 0) == k && may_tail
+        tailing = (if may_tail then \w -> rubyCat [w, repr] else identity) >> always
+        rubyCatWithTailing = (\bn -> \k -> \l ->
+            let o = String.toInt (anIntToString an) |> Maybe.withDefault 0
+            in if (anInt 0) == k && may_tail
               then
                 let ex = Dict.get o cases |> Maybe.map List.singleton
                 in rubyCat (case l of
@@ -202,8 +213,8 @@ gatherCounterWithRuby number cases repr =
                   ) -- working with Lists in elm is...
               else rubyCat (l ++ [recu k may_tail])
           )
-        namingIsHard = (\anExactValue -> \aPowOfTen -> \itsRuby -> \itContainsItsDigit -> \u ->
-            let (div, mod) = divmodAnInt u (anInt aPowOfTen) |> Maybe.withDefault (anInt 0, anInt 0) -- YYY: than even reachable?
+        recursing = (\anExactValue -> \aPowOfTen -> \itsRuby -> \itContainsItsDigit -> \u ->
+            let (div, mod) = divmodAnInt u aPowOfTen |> Maybe.withDefault (anInt 0, anInt 0) -- YYY: than even reachable?
             in rubyCatWithTailing anExactValue mod (
               if itContainsItsDigit
                 then [                itsRuby]
@@ -213,38 +224,44 @@ gatherCounterWithRuby number cases repr =
       in case special of
         Just ex -> ex -- special cases already contains the counter's repr
         Nothing -> case Dict.get n one_nine_ of
-          Just it -> tailing it
+          Just it -> tailing it n
           Nothing -> ifBelow an
-            [ ( anInt 11,  \_ -> tailing ten_ )
-            , ( anInt 20,  \u -> namingIsHard 10 10 ten_ True  u )
-            , ( anInt 100, \u -> namingIsHard 10 10 ten_ False u )
+            [ ( anInt 11,  tailing ten_ )
+            , ( anInt 20,  recursing (anInt 10) (anInt 10) ten_ True  )
+            , ( anInt 100, recursing (anInt 10) (anInt 10) ten_ False )
             --
-            , ( anInt 101,  \_ -> tailing hundred_ )
-            , ( anInt 200,  \u -> namingIsHard 100 100       hundred_ True  u )
-            , ( anInt 300,  \u -> namingIsHard 100 100       hundred_ False u )
-            , ( anInt 400,  \u -> namingIsHard 300 100 three_bundred_ True  u )
-            , ( anInt 600,  \u -> namingIsHard 100 100       hundred_ False u )
-            , ( anInt 700,  \u -> namingIsHard 600 100   six_pundred_ True  u )
-            , ( anInt 800,  \u -> namingIsHard 100 100       hundred_ False u )
-            , ( anInt 900,  \u -> namingIsHard 800 100 eight_pundred_ True  u )
-            , ( anInt 1000, \u -> namingIsHard 100 100       hundred_ False u )
+            , ( anInt 101,  tailing hundred_ )
+            , ( anInt 200,  recursing (anInt 100) (anInt 100)       hundred_ True  )
+            , ( anInt 300,  recursing (anInt 100) (anInt 100)       hundred_ False )
+            , ( anInt 400,  recursing (anInt 300) (anInt 100) three_bundred_ True  )
+            , ( anInt 600,  recursing (anInt 100) (anInt 100)       hundred_ False )
+            , ( anInt 700,  recursing (anInt 600) (anInt 100)   six_pundred_ True  )
+            , ( anInt 800,  recursing (anInt 100) (anInt 100)       hundred_ False )
+            , ( anInt 900,  recursing (anInt 800) (anInt 100) eight_pundred_ True  )
+            , ( anInt 1000, recursing (anInt 100) (anInt 100)       hundred_ False )
             --
-            , ( anInt 1001,  \_ -> tailing thousand_ )
-            , ( anInt 2000,  \u -> namingIsHard 1000 1000       thousand_ True  u )
-            , ( anInt 3000,  \u -> namingIsHard 1000 1000       thousand_ False u )
-            , ( anInt 4000,  \u -> namingIsHard 3000 1000  three_zousand_ True  u )
-            , ( anInt 8000,  \u -> namingIsHard 1000 1000       thousand_ False u )
-            , ( anInt 9000,  \u -> namingIsHard 8000 1000 eight_thousand_ True  u )
-            , ( anInt 10000, \u -> namingIsHard 1000 1000       thousand_ False u )
+            , ( anInt 1001,  tailing thousand_ )
+            , ( anInt 2000,  recursing (anInt 1000) (anInt 1000)       thousand_ True  )
+            , ( anInt 3000,  recursing (anInt 1000) (anInt 1000)       thousand_ False )
+            , ( anInt 4000,  recursing (anInt 3000) (anInt 1000)  three_zousand_ True  )
+            , ( anInt 8000,  recursing (anInt 1000) (anInt 1000)       thousand_ False )
+            , ( anInt 9000,  recursing (anInt 8000) (anInt 1000) eight_thousand_ True  )
+            , ( anInt 10000, recursing (anInt 1000) (anInt 1000)       thousand_ False )
             --
-            , ( anInt 10001,     \_ -> tailing one_tenthousand_ )
-            , ( anInt 100000000, \u -> namingIsHard 10000 10000 tenthousand_ False u )
+            , ( anInt 10001,     tailing one_tenthousand_ ) -- XXX: (is-)sen man [?]
+            , ( anInt 100000000, recursing (anInt 10000) (anInt 10000) tenthousand_ False )
             --
-            , ( anInt 100000001,     \_ -> tailing one_hundredmillion_ )
-            , ( anInt 1000000000000, \u -> namingIsHard 100000000 100000000 hundredmillion_ False u )
+            , ( anInt 100000001,     tailing one_hundredmillion_ ) -- XXX: (is-)sen oku [?]
+            , ( anInt 1000000000000, recursing (anInt 100000000) (anInt 100000000) hundredmillion_ False )
             --
-            , ( anInt 1000000000001,     \_ -> tailing one_trillion_ )
-            , ( anInt 10000000000000000, \u -> namingIsHard 1000000000000 1000000000000 trillion_ False u )
+            , ( anInt 1000000000001,     tailing one_trillion_ )
+            , ( anIntFromKnownString "10000000000000000", recursing (anInt 1000000000000) (anInt 1000000000000) trillion_ False )
+            --
+            , ( anIntFromKnownString "10000000000000001",     tailing one_tenquadrillion_ )
+            , ( anIntFromKnownString "100000000000000000000", recursing (anIntFromKnownString "10000000000000000") (anIntFromKnownString "10000000000000000") tenquadrillion_ False )
+            --
+            , ( anIntFromKnownString "100000000000000000001",     tailing one_hundredquintillion_ )
+            , ( anIntFromKnownString "1000000000000000000000000", recursing (anIntFromKnownString "100000000000000000000") (anIntFromKnownString "100000000000000000000") hundredquintillion_ False )
             --
             ] (\_ -> Ruby "全部の" "ぜんぶの") -- YYY: or 沢山 or idk (hm...)
       )
@@ -294,6 +311,8 @@ kanji_tenthousands_ =
     [ ('万', anInt 10000)
     , ('億', anInt 100000000)
     , ('兆', anInt 1000000000000)
+    , ('京', anInt 10000000000000000)
+    , ('垓', anInt 100000000000000000000)
     ]
 kanji_numerals_ : String
 kanji_numerals_ =

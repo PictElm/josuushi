@@ -29,9 +29,6 @@
   - usual meaning singular
   - usual meaning plural
   - other details (eg. 'duration with the -kan suffix')
-* bigger numbers
-  - [elm-bigint](https://package.elm-lang.org/packages/cmditch/elm-bigint/latest/) (only when needed?)
-  - [jnumbers.htm](https://www.trussel.com/jnumbers.htm)
 
 ## counters
 * niti: distinguish tuitati (1st) and itiniti (1 day) (other such exception to account for?)
