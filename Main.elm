@@ -343,14 +343,17 @@ processQuery index query =
   in
     ( num_pair
     , if List.isEmpty tags
-      then [ "ko" ] -- YYY: default when no counter (hm...)
+      then [ "tu" ] -- YYY: default when no counter (hm...)
       else List.foldr
-        (\tag -> \set ->
+        (\tag -> \dct ->
           Dict.get tag index.byTag
             |> Maybe.withDefault []
-            |> Set.fromList
-            |> Set.union set
-        ) Set.empty tags |> Set.toList
+            |> List.foldl (\it -> Dict.update it (Maybe.withDefault 0 >> (+) 1 >> Just)) dct
+        ) Dict.empty tags
+          |> Dict.toList
+          |> List.sortBy Tuple.second
+          |> List.map Tuple.first
+          |> List.reverse
     )
 
 responseToDecodedCounter : Http.Response String -> Result Http.Error Counter
