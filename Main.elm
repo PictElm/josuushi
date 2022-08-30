@@ -202,7 +202,7 @@ gatherCounterWithRuby number cases repr =
         special = if may_tail then Dict.get n cases else Nothing
         tailing = (if may_tail then \w -> rubyCat [w, repr] else identity) >> always
         rubyCatWithTailing = (\bn -> \k -> \l ->
-            let o = String.toInt (anIntToString an) |> Maybe.withDefault 0
+            let o = String.toInt (anIntToString bn) |> Maybe.withDefault 0
             in if (anInt 0) == k && may_tail
               then
                 let ex = Dict.get o cases |> Maybe.map List.singleton
