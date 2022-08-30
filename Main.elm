@@ -396,6 +396,9 @@ viewResult num counter =
             Just n  -> viewRuby <| counterToRuby counter n
             Nothing -> Html.text "enter a number"
           ]
+        , Html.a
+          [ Attr.href ("https://jisho.org/word/" ++ counter.repr.text) ]
+          [ Html.text "Jisho.org" ]
         ]
       , Html.details
         []
@@ -438,29 +441,41 @@ viewResult num counter =
       ] -- .info
     ] -- .repr
 
-viewHomePage : Html.Html Message
-viewHomePage =
+viewHomePage : Model -> Html.Html Message
+viewHomePage model =
   Html.div
     [ Attr.class "page-home" ]
-    [ Html.text "HomePage" ]
+    [ Html.p
+      []
+      [ Html.text (String.fromInt (Dict.size model.counters.byRef) ++ " counters in database.") ]
+    ]
 
-viewLoading : Html.Html Message
-viewLoading =
+viewLoading : Model -> Html.Html Message
+viewLoading model =
   Html.div
     [ Attr.class "page-loading" ]
-    [ Html.text "Loading" ]
+    [ Html.p
+      []
+      [ Html.text ("searching a counter for " ++ String.join " / " model.parsedTags) ]
+    ]
 
-viewNotFound : Html.Html Message
-viewNotFound =
+viewNotFound : Model -> Html.Html Message
+viewNotFound model =
   Html.div
     [ Attr.class "page-not-found" ]
-    [ Html.text "NotFound" ]
+    [ Html.p
+      []
+      [ Html.text ("could not find any counter for " ++ String.join " / " model.parsedTags) ]
+    ]
 
 viewFound : Model -> List Counter -> Html.Html Message
 viewFound model list =
   Html.div
     [ Attr.class "page-found" ]
-    [ Html.input
+    [ Html.p
+      []
+      [ Html.text (String.fromInt (List.length list) ++ " result" ++ (if 1 == List.length list then "" else "s")) ]
+    , Html.input
       [ Attr.id "number-input"
       , Attr.placeholder "number"
       , Attr.value model.numberInput
@@ -490,6 +505,7 @@ type alias Model =
   , numberInput : String
   , number : Maybe Int
   , current : Page
+  , parsedTags : List String
   , counters : CounterIndex
   , theme : String
   }
@@ -509,6 +525,7 @@ init (jsonCounterIndex, theme) =
     , numberInput = ""
     , number = Nothing
     , current = HomePage
+    , parsedTags = ["(wait, how did you..?)"]
     , counters = counterIndex jsonCounterIndex
     , theme = theme
     }
@@ -550,6 +567,7 @@ update msg model =
       in
         ( { model_wnum
           | current = Loading
+          , parsedTags = list
           }
         , list
           |> List.map refToRequestTask -- List (Task Http.Error Counter)
@@ -591,19 +609,26 @@ view model =
     ]
     [ Html.header
       []
-      [ Html.text "head"
+      [ Html.h1
+        []
+        [ viewRuby (Ruby "助数詞" "じょすうし")
+        , Html.text " — counters"
+        ]
       , Html.button
-        [ Event.onClick ChangeTheme ]
+        [ Attr.id "theme-change"
+        , Event.onClick ChangeTheme
+        ]
         [ Html.text "change theme" ]
-      ]
+      ] -- header
+    , Html.hr [] []
     , Html.form
       [ Attr.id "search-bar"
-      , Attr.autofocus True
+      , Attr.autofocus True -- TODO: doesn't work?
       , Event.onInput UpdateQuery
       , Event.onSubmit SearchCounter
       ]
       [ Html.input
-        [ Attr.placeholder "counter for..."
+        [ Attr.placeholder "counter / reading for..."
         , Attr.value model.query
         ]
         []
@@ -614,14 +639,33 @@ view model =
     , Html.div
       [ Attr.id "page-content" ]
       [ case model.current of
-        HomePage   -> viewHomePage
-        Loading    -> viewLoading
-        NotFound   -> viewNotFound
+        HomePage   -> viewHomePage model
+        Loading    -> viewLoading model
+        NotFound   -> viewNotFound model
         Found list -> viewFound model list
       ] -- #page-content
+    , Html.hr [] []
     , Html.footer
       []
-      [ Html.text "foot" ]
+      [ Html.p
+        []
+        [ Html.text
+            """
+              This page is made available with the hope of being helpful at most; it should not be taken as always accurate.
+              If you belive you found an error, it could very much be one. In that case, you may report it.
+              Because it is still in quite early developpment, not many counters have been added to the database. It will be filled slowly.
+            """
+        ]
+      , Html.ul
+        []
+        (List.map (\(text, href) -> Html.li [] [ Html.a [ Attr.href href ] [ Html.text text ] ])
+          [ ("explore the sources", "https://github.com/pictelm/josuushi")
+          , ("report an error (not yet)",     "https://github.com/pictelm/josuushi/issues/template-or-something")
+          , ("report a bug (not yet)",        "https://github.com/pictelm/josuushi/issues/template-or-something")
+          , ("request for counter (not yet)", "https://github.com/pictelm/josuushi/issues/template-or-something")
+          , ("contribute (not yet)",          "perdu.com")
+          ])
+      ] -- footer
     ] -- #root
 
 --- entry point

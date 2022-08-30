@@ -10,6 +10,12 @@ if ! test -x "$elm"
     chmod +x elm-stuff/$ver/elm
 fi
 
+if test "$1" = -d
+  then
+    "$elm" make Main.elm --debug --output=main.js
+    exit 0
+fi
+
 "$elm" make Main.elm --optimize --output=tmp.js
 
 command -v uglifyjs >/dev/null || command -v npx >/dev/null && uglifyjs() { npx uglify-js "$@"; }
