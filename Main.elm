@@ -386,20 +386,23 @@ viewResult num counter =
     , Html.div
       [ Attr.class "info" ]
       [ Html.div
-        []
+        [ Attr.class "overview" ]
         [ Html.span
           [ Attr.class "tags" ]
-          [ Html.text (String.join ", " counter.tags) ]
-        , Html.span
-          [ Attr.class "computed" ]
-          [ case num of
-            Just n  -> viewRuby <| counterToRuby counter n
-            Nothing -> Html.text "enter a number"
-          ]
+          [ Html.text (String.join ", " counter.tags) ] -- YYY: highlight matches from query?
+        , Html.br [] []
         , Html.a
           [ Attr.href ("https://jisho.org/word/" ++ counter.repr.text) ]
           [ Html.text "Jisho.org" ]
+        ] -- .overview
+      , Html.span
+        [ Attr.class "computed"
+        , Attr.class (if Nothing == num then "empty" else "filled")
         ]
+        [ case num of
+          Just n  -> viewRuby <| counterToRuby counter n
+          Nothing -> Html.text "enter a number"
+        ] -- .computed
       , Html.details
         []
         [ Html.summary

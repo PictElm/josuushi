@@ -83,6 +83,7 @@ header {
 }
 header h1 {
     font-size: 1.5em;
+    margin: 0;
 }
 header button#theme-change {
     background: var(--c);
@@ -148,7 +149,7 @@ form#search-bar button::before {
 .result .repr {
     float: left;
     font-size: 3em;
-    width: 12%;
+    /*width: 12%;*/
     padding: .5em;
     padding-bottom: 0em;
 }
@@ -162,13 +163,23 @@ form#search-bar button::before {
         padding-left: 0;
     }
 }
+.result .overview {
+    margin-left: 5em;
+}
 .result .computed {
-    position: absolute;
-    right: 20vw;
+    float: right;
+}
+.result .computed.empty {
+    font-size: .75em;
+}
+.result .computed.filled {
     font-size: 1.5em;
+    max-width: 100%;
+    overflow: scroll;
+    padding-top: .5em;
 }
 .result details {
-    padding-top: 1.5em;
+    padding-top: 3.5em;
 }
 .result summary {
     padding: 1em;
