@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+import sys
+prg = sys.argv.pop(0)
+if len(sys.argv) < 2: exit("Usage: <repr-text> <repr-floating> [<tags>] [<cases-numbers>]")
+
+text, floating, *rest = sys.argv
+tags, cases = [], []
+while len(rest):
+  try:
+    a = int(rest[0])
+    break
+  except:
+    tags.append(rest.pop(0))
+cases = rest
+
+with open("data/_" + "_".join("%05x" % ord(k) for k in text), "w") as data:
+  data.write(f"""{{
+  "repr": ["{text}", "{floating}"],
+  "tags": ["{'", "'.join(tags)}"],
+  "cases": {{
+{''',
+'''.join(f'    "{k}": ["{text}", "{floating}"]' for k in cases)}
+  }}
+}}
+""")
