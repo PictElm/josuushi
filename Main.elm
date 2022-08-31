@@ -447,7 +447,7 @@ viewHomePage model =
     [ Attr.class "page-home" ]
     [ Html.p
       []
-      [ Html.text (String.fromInt (Dict.size model.counters.byRef) ++ " counters in database.") ]
+      [ Html.text (String.fromInt (Dict.size model.counters.byRef) ++ " counters in database") ]
     ]
 
 viewLoading : Model -> Html.Html Message
@@ -456,7 +456,7 @@ viewLoading model =
     [ Attr.class "page-loading" ]
     [ Html.p
       []
-      [ Html.text ("searching a counter for " ++ String.join " / " model.parsedTags) ]
+      [ Html.text ("looking up a counter for " ++ String.join " / " model.parsedTags) ]
     ]
 
 viewNotFound : Model -> Html.Html Message
@@ -471,7 +471,7 @@ viewNotFound model =
 viewFound : Model -> List Counter -> Html.Html Message
 viewFound model list =
   Html.div
-    [ Attr.class "page-found" ]
+    [ Attr.class "page-found" ] -- TODO: when 0 results, NotFound is actualy when error occured
     [ Html.p
       []
       [ Html.text (String.fromInt (List.length list) ++ " result" ++ (if 1 == List.length list then "" else "s")) ]
@@ -625,13 +625,13 @@ view model =
     , Html.hr [] []
     , Html.form
       [ Attr.id "search-bar"
-      , Attr.autofocus True -- TODO: doesn't work?
       , Event.onInput UpdateQuery
       , Event.onSubmit SearchCounter
       ]
       [ Html.input
-        [ Attr.placeholder "counter / reading for..."
+        [ Attr.placeholder "counter/reading for..."
         , Attr.value model.query
+        , Attr.autofocus True
         ]
         []
       , Html.button
@@ -660,12 +660,12 @@ view model =
         ]
       , Html.ul
         []
-        (List.map (\(text, href) -> Html.li [] [ Html.a [ Attr.href href ] [ Html.text text ] ])
+        (List.map (\(text, href) -> Html.li [] [ Html.a [ Attr.href href, Attr.target "_blank", Attr.rel "noopener" ] [ Html.text text ] ])
           [ ("explore the sources", "https://github.com/pictelm/josuushi")
-          , ("report an error (not yet)",     "https://github.com/pictelm/josuushi/issues/template-or-something")
-          , ("report a bug (not yet)",        "https://github.com/pictelm/josuushi/issues/template-or-something")
-          , ("request for counter (not yet)", "https://github.com/pictelm/josuushi/issues/template-or-something")
-          , ("contribute (not yet)",          "perdu.com")
+          , ("report an error (not yet)",     "") --"https://github.com/pictelm/josuushi/issues/template-or-something")
+          , ("report a bug (not yet)",        "") --"https://github.com/pictelm/josuushi/issues/template-or-something")
+          , ("request for counter (not yet)", "") --"https://github.com/pictelm/josuushi/issues/template-or-something")
+          , ("contribute (not yet)",          "") --"perdu.com")
           ])
       ] -- footer
     ] -- #root
