@@ -1,7 +1,5 @@
 # TODO
 
-## tosee
-
 ## html
 * home page
 * loading page
