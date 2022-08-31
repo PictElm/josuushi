@@ -19,6 +19,7 @@
         node: document.getElementById('app'),
         flags: [
           document.getElementById('data').text,
+          decodeURIComponent(window.location.search.substring(3)),
           localStorage.getItem('josuushi.user.theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light")
         ]
       }).ports.setStorage.subscribe(localStorage.setItem.bind(localStorage, 'josuushi.user.theme'));

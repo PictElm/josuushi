@@ -49,6 +49,53 @@ html, body {
     color: var(--c);
     height: auto;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#root>hr {
+    display: none;
+}
+
+a {
+    color: var(--d);
+}
+
+footer {
+    margin-top: auto;
+    font-size: .75em;
+    padding: 2em;
+    display: flex;
+    flex-direction: row;
+}
+footer>p {
+    flex: 2 1 0px;
+    text-align: right;
+}
+footer>ul {
+    flex: 1 1 0px;
+}
+
+header {
+    padding: 1.5em;
+    display: flex;
+    justify-content: space-between;
+}
+header h1 {
+    font-size: 1.5em;
+    margin: 0;
+}
+header button#theme-change {
+    background: var(--c);
+    border: solid 2px var(--c);
+    border-radius: .9em;
+    color: var(--b);
+    overflow: hidden;
+    max-width: 1.8em;
+    max-height: 1.8em;
+}
+header button#theme-change::before {
+    content: '\25d0\a0\a0\a0';
 }
 
 form#search-bar {
@@ -63,6 +110,7 @@ form#search-bar input {
     border-radius: .5em 0 0 .5em;
     border-right: none;
     padding-left: .3em;
+    max-width: 75vw;
 }
 form#search-bar button {
     border-radius: 0 .5em .5em 0;
@@ -79,6 +127,11 @@ form#search-bar button::before {
 #page-content {
     margin: 10vw 20vw;
 }
+@media (max-width: 720px) {
+    #page-content {
+        margin: 10vw;
+    }
+}
 
 .page-found #number-input {
     position: absolute;
@@ -86,6 +139,7 @@ form#search-bar button::before {
 }
 .page-found ol {
     list-style: none;
+    padding: 0;
 }
 
 .result {
@@ -95,40 +149,58 @@ form#search-bar button::before {
 .result .repr {
     float: left;
     font-size: 3em;
-    width: 12%;
+    /*width: 12%;*/
     padding: .5em;
     padding-bottom: 0em;
 }
 .result .info {
     padding: 4em;
-    padding-bottom: 1em;
+    padding-bottom: 0.5em;
+}
+@media (max-width: 720px) {
+    .result .info {
+        padding-right: 0;
+        padding-left: 0;
+    }
+}
+.result .overview {
+    margin-left: 5em;
 }
 .result .computed {
-    position: absolute;
-    right: 20vw;
+    float: right;
+}
+.result .computed.empty {
+    font-size: .75em;
+}
+.result .computed.filled {
     font-size: 1.5em;
+    max-width: 100%;
+    overflow: scroll;
+    padding-top: .5em;
 }
 .result details {
-    padding-top: 2.5em;
+    padding-top: 3.5em;
 }
 .result summary {
+    padding: 1em;
     text-align: center;
+    font-family: monospace;
     cursor: pointer;
     color: var(--b);
 }
 .result summary::marker,
 .result summary::after {
-    content: '\2b9f';
+    content: '\25bc';
 }
 .result details[open] summary::marker,
 .result details[open] summary::after {
-    content: '\2b9d';
+    content: '\25b2';
 }
 .result summary::before {
-    content: 'more';
+    content: ' more ';
 }
 .result details[open] summary::before {
-    content: 'less';
+    content: ' less ';
 }
 .result .info table {
     width: 100%;

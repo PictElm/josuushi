@@ -1,32 +1,7 @@
 # TODO
 
-## html
-* home page
-* loading page
-* not found page
-* header
-  - (idk, logo/title?)
-* footer
-  - (idk, sources?)
-  - report error
-  - report bug
-  - contribute
-  - request for counter
-
-## css
-* manual theme switch
-* `#number-input`
-* header
-* footer
-
 ## misc
 * filename pattern for data/*.json (multiple counters can have the same reading)
-* tag pattern (ie. 'choice of')
-  - kanzi form
-  - 'common' reading
-  - usual meaning singular
-  - usual meaning plural
-  - other details (eg. 'duration with the -kan suffix')
 * bigger numbers
   - [elm-bigint](https://package.elm-lang.org/packages/cmditch/elm-bigint/latest/) (only when needed?)
   - [jnumbers.htm](https://www.trussel.com/jnumbers.htm)
