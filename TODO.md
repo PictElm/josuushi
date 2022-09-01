@@ -1,11 +1,11 @@
 # TODO
 
-## counters
+* about less common or such readings (eg. いっぴ, みったり, よったり, ...)
 * niti: distinguish tuitati (1st) and itiniti (1 day) (other such exception to account for?)
 * about suffix (eg. -kan, -me)
 * handle counters with multiple kanji/readings
 * [more counters, starting with eg.:]
-  - nen
+  - nin
   - getu
   - niti
   - zi
@@ -28,3 +28,4 @@
   - [jcount.html](https://www.trussel.com/jcount.htm)
   - [ちょっと便利帳](https://www.benricho.org/kazu/kazu_riyou.html)
   - [助数-さ](https://hiramatu-hifuka.com/onyak/onyak2/josu-sa.html)
+  - [hitono-kazoekat](http://www.kennya.jp/kotenn/hitono-kazoekat/)

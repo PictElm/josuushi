@@ -1,0 +1,22 @@
+#!/bin/sh -ex
+cd "`git rev-parse --show-toplevel`"
+
+if ! command -v uglifyjs >/dev/null
+  then command -v npx >/dev/null && uglifyjs() { npx uglify-js "$@"; }
+fi
+type uglifyjs >/dev/null
+mv main.js tmp.js
+
+echo === minifying main.js
+uglifyjs tmp.js --compress pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe | uglifyjs --mangle --output main.js
+printf 'original: %7d%.s bytes\nminified: %7d%.s bytes\n%.s%.s' `wc -c tmp.js main.js`
+
+rm tmp.js
+
+before=`du -b data/`
+nodejs=`command -v nodejs || command -v node`
+test -x "$nodejs"
+
+echo === minifying data/
+"$nodejs" -e 'process.argv.slice(1).forEach(it => fs.writeFileSync(it, JSON.stringify(JSON.parse(fs.readFileSync(it, "utf8")))))' data/*
+printf 'original: %7d%.s bytes\nminified: %7d%.s bytes\n' $before `du -b data/`

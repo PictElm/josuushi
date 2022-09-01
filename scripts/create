@@ -13,7 +13,8 @@ while len(rest):
     tags.append(rest.pop(0))
 cases = rest
 
-with open("data/_" + "_".join("%05x" % ord(k) for k in text), "w") as data:
+filename = f"data/_{"_".join("%05x" % ord(k) for k in text)}.json"
+with open(filename, "w") as data:
   data.write(f"""{{
   "repr": ["{text}", "{floating}"],
   "tags": ["{'", "'.join(tags)}"],
@@ -23,3 +24,4 @@ with open("data/_" + "_".join("%05x" % ord(k) for k in text), "w") as data:
   }}
 }}
 """)
+print(filename)
