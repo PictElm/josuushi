@@ -13,7 +13,7 @@ fi
 if test "$1" = -d
   then
     "$elm" make Main.elm --debug --output=main.js
-    exit 0
+    exit
 fi
 
 "$elm" make Main.elm --optimize --output=tmp.js

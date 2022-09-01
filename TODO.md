@@ -1,11 +1,5 @@
 # TODO
 
-## misc
-* filename pattern for data/*.json (multiple counters can have the same reading)
-* bigger numbers
-  - [elm-bigint](https://package.elm-lang.org/packages/cmditch/elm-bigint/latest/) (only when needed?)
-  - [jnumbers.htm](https://www.trussel.com/jnumbers.htm)
-
 ## counters
 * niti: distinguish tuitati (1st) and itiniti (1 day) (other such exception to account for?)
 * about suffix (eg. -kan, -me)
