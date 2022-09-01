@@ -8,7 +8,6 @@ import Html.Events as Event
 import Http
 import Json.Decode as Json
 import Regex exposing (Regex)
-import Set
 import Task exposing (Task)
 
 type alias Ruby =
@@ -232,14 +231,14 @@ counterToRubyRegular : Counter -> Int -> Ruby
 counterToRubyRegular counter number =
   gatherCounterWithRuby number counter.cases counter.repr
 
-counterToRuby : Counter -> Int -> Ruby
+counterToRuby : Counter -> Int -> (Ruby, Bool)
 counterToRuby counter n =
   case Dict.get -n counter.cases of
-    Just exact_ex -> counterToRubyException exact_ex
+    Just exact_ex -> (counterToRubyException exact_ex, True)
     Nothing ->
       case Dict.get n counter.cases of
-        Just generic_ex -> counterToRubyException generic_ex
-        Nothing -> counterToRubyRegular counter n
+        Just generic_ex -> (counterToRubyException generic_ex, True)
+        Nothing -> (counterToRubyRegular counter n, False)
 
 kanji_digits_ : Dict Char Int
 kanji_digits_ =
@@ -403,7 +402,7 @@ viewResult num counter =
         , Attr.class (if Nothing == num then "empty" else "filled")
         ]
         [ case num of
-          Just n  -> viewRuby <| counterToRuby counter n
+          Just n  -> viewRuby <| Tuple.first <| counterToRuby counter n
           Nothing -> Html.text "enter a number"
         ] -- .computed
       , Html.details
@@ -428,17 +427,13 @@ viewResult num counter =
               []
               <| List.map
                 (\n ->
-                  let
-                    (class, ruby) = case Dict.get n counter.cases of
-                      Just ex -> ("exception", counterToRubyException ex)
-                      Nothing -> ("regular", counterToRubyRegular counter n)
-                  in
-                    Html.tr
-                      [ Attr.class class ]
-                      [ Html.td [] [ Html.text (String.fromInt n) ]
-                      , Html.td [] [ Html.text ruby.text ]
-                      , Html.td [] [ Html.text ruby.floating ]
-                      ]
+                  let (ruby, is_ex) = counterToRuby counter n
+                  in Html.tr
+                    [ Attr.classList [ ("exception", is_ex), ("regular", not is_ex) ] ]
+                    [ Html.td [] [ Html.text (String.fromInt n) ]
+                    , Html.td [] [ Html.text ruby.text ]
+                    , Html.td [] [ Html.text ruby.floating ]
+                    ]
                 )
                 (List.range 1 10 ++ List.filter (\n -> 10 < n) (Dict.keys counter.cases))
             ] -- table
