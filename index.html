@@ -1,24 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset=UTF-8>
     <title>Josuushi</title>
-    <link href="style.css" rel="stylesheet">
-    <script src="main.js"></script>
-    <script id="data" type="application/json">
-      [ ["nichi", ["日", "にち", "day", "days", "time"]]
-      , ["hun", ["分", "ふん", "minute", "minutes", "time"]]
-      , ["ko", ["個", "こ", "place holder", "plho", "da"]]
-      ]
-    </script>
+    <link href=style.css rel=stylesheet>
+    <script src=main.js></script>
+    <script src=data/index.js></script>
   </head>
   <body>
-    <div id="app"></div>
-    <script>
-      var app = Elm.Main.init({
-        node: document.getElementById('app'),
-        flags: document.getElementById('data').text
-      });
-    </script>
+    <script id=app>Elm.Main.init({ node: document.getElementById('app'), flags: [counterIndexJSON, decodeURIComponent(window.location.search.substring(3)), localStorage.getItem('josuushi.user.theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')] }).ports.setStorage.subscribe(localStorage.setItem.bind(localStorage, 'josuushi.user.theme'))</script>
   </body>
 </html>
