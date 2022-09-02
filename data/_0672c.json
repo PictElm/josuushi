@@ -1,0 +1,10 @@
+{
+  "repr": ["本", "ほん"],
+  "tags": ["cylindrical", "film", "films", "TV", "show", "shows", "goal", "goals", "call", "calls", "bottle", "bottles", "-- etc.."],
+  "cases": {
+    "1": ["一本", "いっぽん"],
+    "3": ["三本", "さんぼん"],
+    "6": ["六本", "ろっぽん"],
+    "10": ["十本", "じゅっぽん"]
+  }
+}

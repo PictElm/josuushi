@@ -2,7 +2,8 @@
 
 Build with:
 ```console
-$ elm make Main.elm --output=main.js
+$ scripts/build && scripts/index
+$ scripts/minify # optionally
 ```
 
 The result is a static site:

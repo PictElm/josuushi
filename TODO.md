@@ -1,26 +1,15 @@
 # TODO
 
+* (css) font (find one with accurate enough kanji)
+* function to do plural or singular so only one is present in the tags (probably more natural to have plural in the tags?)
 * about less common or such readings (eg. いっぴ, みったり, よったり, ...)
 * niti: distinguish tuitati (1st) and itiniti (1 day) (other such exception to account for?)
+* syuukan: is there a syuu (as in eg. 1st week?)
 * about suffix (eg. -kan, -me)
 * handle counters with multiple kanji/readings
 * [more counters, starting with eg.:]
-  - nin
-  - getu
-  - niti
-  - zi
-  - hun
-  - [zikan] - same as zi
-  - syuukan - is there a syuu (as in eg. 1st week?)
-  - kagatu
-  - nin
-  - hon
-  - mai
-  - satu
-  - hiki
-  - [ko]
-  - kasyo
-  - tu
+  - [zikan] - same as zi..
+  - [ko] & tu
 * see
   - [Tae Kim](http://guidetojapanese.org/learn/grammar/numbers)
   - [Tofugu](https://www.tofugu.com/japanese/japanese-counters-list/)

@@ -388,7 +388,7 @@ processQuery index query =
   in
     ( num_pair
     , if List.isEmpty tags
-      then [ "tu" ] -- YYY: default when no counter (hm...)
+      then Dict.get "thing" index.byTag |> Maybe.withDefault [] --[ "_07b87" ] --[ "tu" ] -- YYY: default when no counter (hm...)
       else List.foldr
         (\tag -> \dct ->
           Dict.get tag index.byTag
