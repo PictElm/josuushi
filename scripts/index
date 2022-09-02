@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+// generate the counter index from the json files in data/
+const fs = require('fs'), join = require('path').join;
+let count = 0;
+fs
+  .writeFileSync(join(__dirname, '..', 'data', 'index.js'), "counterIndexJSON='" + JSON
+    .stringify(fs
+      .readdirSync(join(__dirname, '..', 'data'))
+      .filter(it => it.startsWith('_') && it.endsWith('.json'))
+      .map(it => {
+        const r = JSON.parse(fs.readFileSync(join(__dirname, '..', 'data', it), 'utf8'));
+        const l = [];
+        [].push.apply(l, r.repr);
+        [].push.apply(l, r.tags);
+        return count++, [it.slice(0, -5), l];
+      })
+    ) + "'"
+);
+console.log(count + ' counters');

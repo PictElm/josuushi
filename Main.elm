@@ -573,7 +573,7 @@ init (jsonCounterIndex, urlQuery, theme) =
     , number = Nothing
     , current = HomePage
     , parsedTags = ["(wait, how did you..?)"]
-    , counters = counterIndex jsonCounterIndex
+    , counters = counterIndex jsonCounterIndex -- TODO: if this double-parsing becomes a problem, only do in js-side (only really use the `byTags` anyways)
     , theme = theme
     }
   , if "" == urlQuery

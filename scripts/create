@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# helper to create a new counter in data/ from its kanji, reading...
 import sys
 prg = sys.argv.pop(0)
 if len(sys.argv) < 2: exit("Usage: <repr-text> <repr-floating> [<tags>] [<cases-numbers>]")
