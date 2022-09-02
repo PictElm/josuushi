@@ -361,18 +361,20 @@ parseInt c =
   let f = String.left 1 c
   in if String.contains f kanji_numerals_
     then kanjiToInt c
-    else anIntFromString (if String.contains f "0123456789"
-      then c
-      else c |> String.map (\k -> Char.toCode k |> (+) -65248 |> Char.fromCode)) -- ord('０')-ord('0')
+    else anIntFromString (
+        let cc = String.filter (\k -> not <| List.member k [' ', ',', '_', '　', '，']) c
+        in if String.contains f "0123456789 ,_"
+          then cc
+          else cc |> String.map (\k -> Char.toCode k |> (+) -65248 |> Char.fromCode) -- ord('０')-ord('0')
+      )
 
 rx_number_ : Regex
-rx_number_ = Regex.fromString ("^.*?[0-9]+|[" ++ kanji_numerals_ ++ "]+|[０-９]+") |> Maybe.withDefault Regex.never
+rx_number_ = Regex.fromString ("^.*?[0-9 ,_]+|[" ++ kanji_numerals_ ++ "]+|[０-９　，]+") |> Maybe.withDefault Regex.never
 rx_tag_ : Regex
 rx_tag_ = Regex.fromString "[A-Za-z]+|[一-龯]|[ぁ-んァ-ン]+" |> Maybe.withDefault Regex.never
 parseQuery : String -> (Maybe (String, AnInt), List String)
-parseQuery q =
+parseQuery qq =
   let
-    qq = String.filter (\k -> not <| List.member k [' ', ',', '_', '　', '，']) q
     (str, num) = case Regex.findAtMost 1 rx_number_ qq of
       head :: _ -> (head.match, parseInt head.match)
       []        -> ("", Nothing)
