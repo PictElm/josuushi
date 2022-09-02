@@ -1,6 +1,7 @@
 #!/bin/sh -ex
 # tries to deploy (ie. build-index-minify-commit) from the current (clean) branch
-not_deployed='.gitignore Main.elm README.md elm.json scripts/'
+# dangerous and not reliably, better off doing it manually
+not_deployed='.gitignore Main.elm README.md TODO.md elm.json scripts/'
 build_result='index.html style.css main.js data/'
 
 test -z "`git status --porcelain`"
@@ -18,12 +19,15 @@ git checkout --no-guess ${1:-deploy}
 #git pull
 
 git merge $from --no-ff || (
-  git rm -r --ignore-unmatch $not_deployed
+  git rm -rf --ignore-unmatch $not_deployed
   git commit
 )
 
-git rm -r --ignore-unmatch $build_result
-git stash pop
+git rm -rf --ignore-unmatch $build_result
+git stash pop || (
+  git add $build_result
+  git stash drop
+)
 git commit --amend --no-edit
 
 #git push

@@ -1,5 +1,7 @@
 # TODO
 
+* home page: usage examples?
+* (css) still bad on eg. phone
 * (css) font (find one with accurate enough kanji)
 * function to do plural or singular so only one is present in the tags (probably more natural to have plural in the tags?)
 * about less common or such readings (eg. いっぴ, みったり, よったり, ...)
