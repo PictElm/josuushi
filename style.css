@@ -1,9 +1,9 @@
 #root {
-    --a: #faf;
-    --b: #faf;
-    --c: #faf;
-    --d: #faf;
-    --e: #faf;
+    --a: #fff;
+    --b: #5af;
+    --c: #f5f;
+    --d: #5af;
+    --e: #fa5;
 }
 #root.dark {
     --a: #242628;
@@ -65,15 +65,24 @@ a {
 footer {
     margin-top: auto;
     font-size: .75em;
-    padding: 2em;
+    padding: 1.5em;
     display: flex;
     flex-direction: row;
 }
 footer>p {
+    border-top: solid 1px var(--b);
+    padding-top: 1.5em;
     flex: 2 1 0px;
     text-align: right;
 }
+@media (min-width: 720px) {
+    footer>p {
+        padding-left: 10%;
+    }
+}
 footer>ul {
+    border-top: solid 1px var(--b);
+    padding-top: 1.5em;
     flex: 1 1 0px;
 }
 
@@ -177,7 +186,7 @@ form#search-bar button::before {
 .result .computed.filled {
     font-size: 1.5em;
     max-width: 100%;
-    overflow: scroll;
+    overflow: auto;
     padding-top: .5em;
 }
 .result details {
