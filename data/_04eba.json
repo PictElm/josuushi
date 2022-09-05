@@ -1,6 +1,6 @@
 {
   "repr": ["人", "にん"],
-  "tags": ["person", "people", "human", "humans"],
+  "tags": ["people", "humans"],
   "cases": {
     "-1": ["一人", "ひとり"],
     "-2": ["二人", "ふたり"],

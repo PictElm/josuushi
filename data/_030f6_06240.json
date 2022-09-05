@@ -1,6 +1,6 @@
 {
   "repr": ["ヶ所", "かしょ"],
-  "tags": ["location", "locations", "place", "places", "part", "parts", "passage", "passages"],
+  "tags": ["locations", "places", "parts", "passages"],
   "cases": {
     "1": ["一ヶ所", "いっかしょ"],
     "6": ["六ヶ所", "ろっかしょ"],
