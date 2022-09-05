@@ -4,6 +4,8 @@
 * result page: when no result (also: default to the tu counter?)
 * (loading page: what is that!)
 * function to do plural or singular so only one is present in the tags (probably more natural to have plural in the tags?)
+  - potentialPlurals : String -> List String
+  - potentialKana : String -> List String
 
 * about less common or such readings (eg. いっぴ, みったり, よったり, ...)
 * niti: distinguish tuitati (1st) and itiniti (1 day) (other such exception to account for?)

@@ -384,9 +384,178 @@ parseQuery qq =
     , Regex.find rx_tag_ qqq |> List.map .match
     )
 
+potentialPlurals : String -> List String
+potentialPlurals c = []
+
+hiraganaMap1_ : Dict String String
+hiraganaMap1_ = Dict.fromList
+  [ ("n", "ん")
+  , ("a", "あ")
+  , ("i", "い")
+  , ("u", "う")
+  , ("e", "え")
+  , ("o", "お")
+  ]
+hiraganaMap2_ : Dict String String
+hiraganaMap2_ = Dict.fromList
+  [ ("nn", "ん")
+  , ("ka", "か")
+  , ("ki", "き")
+  , ("ku", "く")
+  , ("ke", "け")
+  , ("ko", "こ")
+  , ("ga", "が")
+  , ("gi", "ぎ")
+  , ("gu", "ぐ")
+  , ("ge", "げ")
+  , ("go", "ご")
+  , ("sa", "さ")
+  , ("si", "し")
+  , ("su", "す")
+  , ("se", "せ")
+  , ("so", "そ")
+  , ("za", "ざ")
+  , ("zi", "じ")
+  , ("zu", "ず")
+  , ("ze", "ぜ")
+  , ("zo", "ぞ")
+  , ("ja", "じゃ")
+  , ("ji", "じ")
+  , ("ju", "じゅ")
+  , ("jo", "じょ")
+  , ("ta", "た")
+  , ("ti", "ち")
+  , ("tu", "つ")
+  , ("te", "て")
+  , ("to", "と")
+  , ("da", "だ")
+  , ("di", "ぢ")
+  , ("du", "づ")
+  , ("de", "で")
+  , ("do", "ど")
+  , ("na", "な")
+  , ("ni", "に")
+  , ("nu", "ぬ")
+  , ("ne", "ね")
+  , ("no", "の")
+  , ("ha", "は")
+  , ("hi", "ひ")
+  , ("hu", "ふ")
+  , ("fu", "ふ")
+  , ("he", "へ")
+  , ("ho", "ほ")
+  , ("ba", "ば")
+  , ("bi", "び")
+  , ("bu", "ぶ")
+  , ("be", "べ")
+  , ("bo", "ぼ")
+  , ("pa", "ぱ")
+  , ("pi", "ぴ")
+  , ("pu", "ぷ")
+  , ("pe", "ぺ")
+  , ("po", "ぽ")
+  , ("ma", "ま")
+  , ("mi", "み")
+  , ("mu", "む")
+  , ("me", "め")
+  , ("mo", "も")
+  , ("ya", "や")
+  , ("yu", "ゆ")
+  , ("yo", "よ")
+  , ("ra", "ら")
+  , ("ri", "り")
+  , ("ru", "る")
+  , ("re", "れ")
+  , ("ro", "ろ")
+  , ("wa", "わ")
+  , ("wo", "を")
+  ]
+hiraganaMap3_ : Dict String String
+hiraganaMap3_ = Dict.fromList
+  [ ("kya", "きゃ")
+  , ("kyu", "きゅ")
+  , ("kyo", "きょ")
+  , ("gya", "ぎゃ")
+  , ("gyu", "ぎゅ")
+  , ("gyo", "ぎょ")
+  , ("sya", "しゃ")
+  , ("syu", "しゅ")
+  , ("syo", "しょ")
+  , ("sha", "しゃ")
+  , ("shi", "し")
+  , ("shu", "しゅ")
+  , ("sho", "しょ")
+  , ("zya", "じゃ")
+  , ("zyu", "じゅ")
+  , ("zyo", "じょ")
+  , ("tya", "ちゃ")
+  , ("tyu", "ちゅ")
+  , ("tyo", "ちょ")
+  , ("cha", "ちゃ")
+  , ("chi", "ち")
+  , ("chu", "ちゅ")
+  , ("cho", "ちょ")
+  , ("dya", "ぢゃ")
+  , ("dyu", "ぢゅ")
+  , ("dyo", "ぢょ")
+  , ("nya", "にゃ")
+  , ("nyu", "にゅ")
+  , ("nyo", "にょ")
+  , ("hya", "ひゃ")
+  , ("hyu", "ひゅ")
+  , ("hyo", "ひょ")
+  , ("bya", "びゃ")
+  , ("byu", "びゅ")
+  , ("byo", "びょ")
+  , ("pya", "ぴゃ")
+  , ("pyu", "ぴゅ")
+  , ("pyo", "ぴょ")
+  , ("mya", "みゃ")
+  , ("myu", "みゅ")
+  , ("myo", "みょ")
+  , ("rya", "りゃ")
+  , ("ryu", "りゅ")
+  , ("ryo", "りょ")
+  , ("jya", "じゃ")
+  , ("jyu", "じゅ")
+  , ("jyo", "じょ")
+  , ("tsu", "つ")
+  ]
+potentialKana : String -> List String
+potentialKana c =
+  let
+    recu : List Char -> Maybe String
+    recu cc =
+      case cc of
+        ' '::_ -> Just ""
+        a3::b3::c3::t3 -> case Dict.get (String.fromList [a3, b3, c3]) hiraganaMap3_ of
+          Just r3 -> recu t3 |> Maybe.map ((++) r3)
+          Nothing ->
+            case cc of
+              a2::b2::t2 -> case Dict.get (String.fromList [a2, b2]) hiraganaMap2_ of
+                Just r2 -> recu t2 |> Maybe.map ((++) r2)
+                Nothing ->
+                  if a2 == b2 && String.contains (String.fromChar a2) "kgszjtdhfbpmyr"
+                    then recu (b2::t2) |> Maybe.map ((++) "っ")
+                    else case cc of
+                      a1::t1 -> case Dict.get (String.fromChar a1) hiraganaMap1_ of
+                        Just r1 -> recu t1 |> Maybe.map ((++) r1)
+                        Nothing -> Nothing
+                      _ -> Nothing
+              _ -> Nothing
+        _ -> Nothing
+  in case recu (String.toList c ++ [' ', ' ']) of
+    Just it -> [it] -- YYY: also katakana
+    Nothing -> []
+
 processQuery : CounterIndex -> String -> (Maybe (String, AnInt), List String)
 processQuery index query =
-  let (num_pair, tags) = parseQuery query
+  let
+    (num_pair, tags) = parseQuery query
+    moreTags
+      =  tags
+      ++ List.concat (List.map potentialPlurals tags)
+      ++ List.concat (List.map potentialKana tags)
   in
     ( num_pair
     , if List.isEmpty tags
@@ -396,7 +565,7 @@ processQuery index query =
           Dict.get tag index.byTag
             |> Maybe.withDefault []
             |> List.foldl (\it -> Dict.update it (Maybe.withDefault 0 >> (+) 1 >> Just)) dct
-        ) Dict.empty tags
+        ) Dict.empty moreTags
           |> Dict.toList
           |> List.sortBy Tuple.second
           |> List.map Tuple.first
