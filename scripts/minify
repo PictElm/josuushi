@@ -1,23 +1,30 @@
 #!/bin/sh -ex
-# minifies the main.js build result and every json files in data/
+# minifies the main.js build result, every json files in data/ and the style.css
 cd "`git rev-parse --show-toplevel`"
 
+## main.js with uglify-js
 if ! command -v uglifyjs >/dev/null
   then command -v npx >/dev/null && uglifyjs() { npx uglify-js "$@"; }
 fi
 type uglifyjs >/dev/null
-mv main.js tmp.js
 
 echo === minifying main.js
+mv main.js tmp.js
 uglifyjs tmp.js --compress pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe | uglifyjs --mangle --output main.js
 printf 'original: %7d%.s bytes\nminified: %7d%.s bytes\n%.s%.s' `wc -c tmp.js main.js`
-
 rm tmp.js
 
-before=`du -b data/`
 nodejs=`command -v nodejs || command -v node`
 test -x "$nodejs"
 
+## data/_*.json with JSON.stringify
 echo === minifying data/
+before=`du -b data/`
 "$nodejs" -e 'process.argv.slice(1).forEach(it => fs.writeFileSync(it, JSON.stringify(JSON.parse(fs.readFileSync(it, "utf8")))))' data/_*.json
 printf 'original: %7d%.s bytes\nminified: %7d%.s bytes\n' $before `du -b data/`
+
+## style.css with the power of regex (!!)
+echo === minifying style.css
+"$nodejs" -e 'console.log(fs.readFileSync(process.argv[1],"utf8").replace(/(\/\*(\n|.)*?\*\/|[\n\s])+/g," ").replace(/(([;:,{}()\]>]) | ([\(\{>])) ?/g,"$2$3").replace(/;}/g,"}"))' style.css >tmp.css
+printf 'original: %7d%.s bytes\nminified: %7d%.s bytes\n%.s%.s' `wc -c style.css tmp.css`
+mv tmp.css style.css

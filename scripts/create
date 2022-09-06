@@ -4,24 +4,33 @@ import sys
 prg = sys.argv.pop(0)
 if len(sys.argv) < 2: exit("Usage: <repr-text> <repr-floating> [<tags>] [<cases-numbers>]")
 
+import os
+try:
+  os.mkdir("crud")
+except:
+  pass
+
 text, floating, *rest = sys.argv
 tags, cases = [], []
 while len(rest):
   try:
-    a = int(rest[0])
+    _ = int(rest[0])
     break
   except:
     tags.append(rest.pop(0))
-cases = rest
+cases = map(int, rest)
 
-filename = f"data/_{'_'.join('%05x' % ord(k) for k in text)}.json"
+tafew = { 1: "一",   2: "二", 3: "三",   4: "四",   5: "五", 6: "六",   7: "七",   8: "八",   9: "九",     10: "十",     11: "十一",       12: "十二",     13: "十三",       14: "十四",       15: "十五",     16: "十六",       17: "十七",       18: "十八",       19: "十九",         20: "二十",     21: "二十一",       22: "二十二",     23: "二十三",       24: "二十四",       25: "二十五",     26: "二十六",       27: "二十七",       28: "二十八",       29: "二十九", }
+fafew = { 1: "いち", 2: "に", 3: "さん", 4: "よん", 5: "ご", 6: "ろく", 7: "なな", 8: "はち", 9: "きゅう", 10: "じゅう", 11: "じゅういち", 12: "じゅうに", 13: "じゅうさん", 14: "じゅうよん", 15: "じゅうご", 16: "じゅうろく", 17: "じゅうなな", 18: "じゅうはち", 19: "じゅうきゅう", 20: "にじゅう", 21: "にじゅういち", 22: "にじゅうに", 23: "にじゅうさん", 24: "にじゅうよん", 25: "にじゅうご", 26: "にじゅうろく", 27: "にじゅうなな", 28: "にじゅうはち", 29: "にじゅうきゅう", }
+
+filename = f"crud/_{'_'.join('%05x' % ord(k) for k in text)}.json"
 with open(filename, "w") as data:
   data.write(f"""{{
   "repr": ["{text}", "{floating}"],
   "tags": ["{'", "'.join(tags)}"],
   "cases": {{
 {''',
-'''.join(f'    "{k}": ["{text}", "{floating}"]' for k in cases)}
+'''.join(f'    "{k}": ["{tafew[k]}{text}", "{fafew[k]}{floating}"]' for k in cases)}
   }}
 }}
 """)
