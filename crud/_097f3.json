@@ -1,0 +1,7 @@
+{
+  "repr": ["音", "おん"],
+  "tags": ["syllables", "musical notes", "musical scales"],
+  "cases": {
+  },
+  "more": "-- This counter is used to count sounds, such as syllables and/or musical notes.\nCounts: syllables, musical notes, musical scales, etc.\n"
+}

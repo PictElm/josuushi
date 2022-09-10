@@ -1,0 +1,7 @@
+{
+  "repr": ["島", "とう"],
+  "tags": ["islands"],
+  "cases": {
+  },
+  "more": "-- This counter counts islands, especially in writing.\nCounts: islands\n"
+}

@@ -1,0 +1,7 @@
+{
+  "repr": ["ステップ", "step"],
+  "tags": ["steps", "plans", "stages", "phases", "grades"],
+  "cases": {
+  },
+  "more": "-- ステップ is used to count steps (as in phases). It can be read with either gairaigo or kango, but for four and above, kango is more common.\nCounts: steps, plans, stages, phases, grades, etc.\n"
+}

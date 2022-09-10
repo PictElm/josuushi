@@ -1,0 +1,7 @@
+{
+  "repr": ["キロ/キログラム", "kilogram"],
+  "tags": ["kilograms"],
+  "cases": {
+  },
+  "more": "-- キログラム counts kilograms. The shorter version キロ is used frequently as well.\nCounts: kilograms\n"
+}

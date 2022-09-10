@@ -1,0 +1,7 @@
+{
+  "repr": ["代", "だい"],
+  "tags": ["generations", "lifetimes", "specific decades", "eras", "reigns"],
+  "cases": {
+  },
+  "more": "-- This counter is used for generations (of about thirty years), decades, lifetimes, eras, reigns, and so on. It's also used to count how many decades old a person is. For example, someone in their twenties would be in their 20代.\nCounts: generations, lifetimes, specific decades, eras, reigns\n"
+}

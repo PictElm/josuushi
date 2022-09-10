@@ -1,0 +1,7 @@
+{
+  "repr": ["円", "えん"],
+  "tags": ["yen"],
+  "cases": {
+  },
+  "more": "-- This is the unit for the Japanese currency, the yen. You'd use this to count an amount of yen.\nCounts: yen\n"
+}

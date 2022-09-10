@@ -1,0 +1,7 @@
+{
+  "repr": ["石", "せき"],
+  "tags": ["stones", "pebbles", "small rocks"],
+  "cases": {
+  },
+  "more": "-- <! inline 55: a stone>\nThis is used to count stones, but it's more common to use the general Japanese counter 個 (こ) these days. While you can still use it to count stones, it's more commonly used for its idiomatic meaning. For example, 一石を投じる (いっせきをとうじる) means \"to bring up a problem\" or \"to stir up controversy.\" There's also 一石二鳥 (いっせきにちょう), which means \"to kill two birds with one stone.\"\nCounts: stones, pebbles, small rocks\n# https://www.tofugu.com/japanese/japanese-counter-ko/"
+}

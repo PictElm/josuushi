@@ -1,0 +1,7 @@
+{
+  "repr": ["カラット", "carat"],
+  "tags": ["gemstone carats", "gold karats"],
+  "cases": {
+  },
+  "more": "-- <! Inline 61: a diamond>\nThis is used to count carats (gems) and karats (gold).\nCounts: gemstone carats, gold karats\n"
+}

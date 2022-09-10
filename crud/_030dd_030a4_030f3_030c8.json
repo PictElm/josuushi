@@ -1,0 +1,7 @@
+{
+  "repr": ["ポイント", "point"],
+  "tags": ["points", "points in time", "points of interest"],
+  "cases": {
+  },
+  "more": "-- ポイント is used to count points. It can be read with either gairaigo or kango. For four and above, both are still okay, but kango is more common, unless it's a specific way to count points in certain sports.\nCounts: points, points in time, points of interest, etc.\n"
+}

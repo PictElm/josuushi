@@ -1,0 +1,7 @@
+{
+  "repr": ["堂", "どう"],
+  "tags": ["chapels", "temples", "shrines", "halls", "lecture halls", "auditoriums", "assembly halls", "churches", "cathedrals"],
+  "cases": {
+  },
+  "more": "-- <! Inline 29: a temple>\nThis is used to count buildings with names that end in 堂, like chapels (礼拝堂), temples (お堂), and halls (〜堂).\nCounts: chapels, temples, shrines, halls, lecture halls, auditoriums, assembly halls, churches, cathedrals, etc.\n"
+}

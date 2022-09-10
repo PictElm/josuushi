@@ -1,0 +1,7 @@
+{
+  "repr": ["株", "かぶ"],
+  "tags": ["plants with roots", "tree stumps", "clusters of mushrooms", "seedlings", "stocks", "stock certificates"],
+  "cases": {
+  },
+  "more": "-- The 株 counter counts plants with roots, tree stumps, clusters of mushrooms, and shares of stock in a company. Use the wago counting method for one and two, then kango from three on up.\nCounts: plants with roots, tree stumps, clusters of mushrooms, seedlings, stocks, stock certificates, etc.\n"
+}

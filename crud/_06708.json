@@ -1,0 +1,7 @@
+{
+  "repr": ["月", "つき/がつ"],
+  "tags": ["months", "calendar months"],
+  "cases": {
+  },
+  "more": "-- 月 is a counter used to count the number of months (\"10 months\" is １０ヶ月) as well as identify the calendar month (\"October\" is １０月). Depending on what you're counting or how it's used, the way it gets read (つき vs げつ vs がつ) changes, so be aware of that. To read up on this counter, check out our full deep-dive into 月.\nCounts: months, calendar months\n# https://www.tofugu.com/japanese/japanese-counter-tsuki-gatsu-getsu/"
+}

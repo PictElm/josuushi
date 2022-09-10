@@ -1,0 +1,7 @@
+{
+  "repr": ["段落", "だんらく"],
+  "tags": ["paragraphs", "stages of tasks"],
+  "cases": {
+  },
+  "more": "-- This is used to count paragraphs and stages of tasks. It can be combined with the ordinal number prefix 第 or the suffix 目 to specify which paragraph or stage is being referenced.\nCounts: paragraphs, stages of tasks\n"
+}

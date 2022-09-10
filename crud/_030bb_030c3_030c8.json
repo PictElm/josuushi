@@ -1,0 +1,7 @@
+{
+  "repr": ["セット", "set"],
+  "tags": ["sets"],
+  "cases": {
+  },
+  "more": "-- This is used to count sets. One through three can be read with any reading method, but four and above are usually read with kango.\nCounts: sets\n"
+}

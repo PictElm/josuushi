@@ -1,0 +1,7 @@
+{
+  "repr": ["段", "だん"],
+  "tags": ["steps of stairs", "shelves", "cake tiers", "bunk bed levels", "drawers", "stages such as rocket stages", "martial arts ranks", "Japanese calligraphy ranks", "paragraphs", "columns"],
+  "cases": {
+  },
+  "more": "-- This counter can count a variety of things, including stairs, steps, shelves, the number of drawers, layers, floors of a bunk bed, stages of a rocket, ranks in martial arts, paragraphs, and even columns. What do these things have in common? Despite being totally different, they also all have pretty distinct layers/levels to them, and they're organized vertically (for the most part).\nCounts: steps of stairs, shelves (when multiple shelves are installed vertically), cake tiers, bunk bed levels, drawers (when multiple drawers are installed vertically), stages such as rocket stages, martial arts ranks, Japanese calligraphy ranks, paragraphs, columns, etc.\n"
+}

@@ -1,0 +1,7 @@
+{
+  "repr": ["プラン", "plan"],
+  "tags": ["plans"],
+  "cases": {
+  },
+  "more": "-- This counter's used to count plans. It can be read with either gairaigo or kango, but wago can be used for one and two as well. For four and above, kango is more common.\nCounts: plans\n"
+}

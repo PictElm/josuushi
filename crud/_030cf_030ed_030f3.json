@@ -1,0 +1,7 @@
+{
+  "repr": ["ハロン", "furlong"],
+  "tags": ["furlongs"],
+  "cases": {
+  },
+  "more": "-- This is used to count furlongs (one-eighth of a mile).\nCounts: furlongs\n"
+}

@@ -1,0 +1,7 @@
+{
+  "repr": ["ユニット", "unit"],
+  "tags": ["units", "program units", "units of furniture", "storage units", "units of singers", "units of comedians"],
+  "cases": {
+  },
+  "more": "-- ユニット is used to count units of people or things. One through three are usually read with gairaigo, but the kango can be used as well.\nCounts: units, program units, units of furniture, storage units, units of singers, units of comedians, etc.\n"
+}

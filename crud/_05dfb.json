@@ -1,0 +1,7 @@
+{
+  "repr": ["巻", "かん"],
+  "tags": ["volumes of books", "cassette tapes", "videotapes", "DVDs", "etc. that are in a series", "and scrolls."],
+  "cases": {
+  },
+  "more": "-- This is used to count volumes of a series of books, videotapes, cassette tapes, etc. It can also be used as an ordinal number suffix to show which item in a series it is. For example, ハリーポッターの１３巻目　is \"the thirteenth Harry Potter book in the series.\"\nCounts: volumes of books, cassette tapes, videotapes, DVDs, etc. that are in a series, and scrolls.\n"
+}

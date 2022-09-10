@@ -1,0 +1,7 @@
+{
+  "repr": ["館", "かん"],
+  "tags": ["art galleries", "art museums", "libraries", "museums", "aquariums", "photo studios"],
+  "cases": {
+  },
+  "more": "-- This counts institutions ending with 館, such as art galleries or art museums (美術館), libraries (図書館), museums (博物館), or aquariums (水族館). You'll especially see it used in writing.\nCounts: art galleries, art museums, libraries, museums, aquariums, photo studios, etc.\n"
+}

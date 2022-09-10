@@ -1,0 +1,7 @@
+{
+  "repr": ["桁", "けた"],
+  "tags": ["digits", "decimal places"],
+  "cases": {
+  },
+  "more": "-- The word 桁 refers to a digit or decimal place in a number, as in \"the third decimal place of pi.\"\nCounts: digits, decimal places\n"
+}

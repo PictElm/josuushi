@@ -1,0 +1,7 @@
+{
+  "repr": ["ヘクタール", "hectare"],
+  "tags": ["hectares"],
+  "cases": {
+  },
+  "more": "-- This is used to count hectares.\nCounts: hectares\n"
+}

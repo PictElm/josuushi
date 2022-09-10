@@ -1,0 +1,7 @@
+{
+  "repr": ["夜", "や/よ"],
+  "tags": ["nights"],
+  "cases": {
+  },
+  "more": "-- This is used to count nights. Normally, it's read with kango using the や reading for 夜, but one and two nights can also be counted with the wago readings. When that happens, 夜 becomes よ.\nIt's also used to count nights in the lunar calendar, which resulted in the idiom 十五夜 (じゅうごや), which means \"a full moon night.\"\nCounts: nights\n"
+}

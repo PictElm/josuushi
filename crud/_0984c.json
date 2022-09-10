@@ -1,0 +1,7 @@
+{
+  "repr": ["題", "だい"],
+  "tags": ["stories"],
+  "cases": {
+  },
+  "more": "-- 題 is used to count titles, problems, and questions on a test. It can be combined with the ordinal number prefix 代 and the ordinal number suffix 目 to refer to specific problems or questions.\nCounts: titles, problems, questions, separate rakugo stories\n"
+}

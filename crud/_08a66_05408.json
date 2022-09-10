@@ -1,0 +1,7 @@
+{
+  "repr": ["試合", "しあい"],
+  "tags": ["games", "matches"],
+  "cases": {
+  },
+  "more": "-- The word 試合 means \"game\" (generally referring to a sports game). This counter counts these games. You'll especially see this counter used for Japanese sports—foreign sports may use the gairaigo counter ゲーム instead.\nCounts: games, matches\n"
+}

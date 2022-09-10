@@ -1,0 +1,7 @@
+{
+  "repr": ["番手", "ばんて"],
+  "tags": ["turns", "sports players' turns", "performances", "thread count", "yarn", "thread"],
+  "cases": {
+  },
+  "more": "-- This is an ordinal number suffix for turns, orders, or ranks. It's also used for units of yarn, thread size, and thread count, which are less common use cases.\nCounts: turns, sports players' turns, performances, thread count, yarn, thread, etc.\n"
+}

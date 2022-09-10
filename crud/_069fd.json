@@ -1,0 +1,7 @@
+{
+  "repr": ["槽", "そう"],
+  "tags": ["bathtubs", "water tanks", "fish tanks", "washing machine tubs"],
+  "cases": {
+  },
+  "more": "-- This is used to count bathtubs (浴槽/よくそう), water and fish tanks (水槽/すいそう), and washing machine tubs (洗濯槽/せんたくそう), all of which end in the kanji 槽!\nCounts: bathtubs, water tanks, fish tanks, washing machine tubs\n"
+}

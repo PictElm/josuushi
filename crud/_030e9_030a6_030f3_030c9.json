@@ -1,0 +1,7 @@
+{
+  "repr": ["ラウンド", "round"],
+  "tags": ["rounds", "baseball rounds", "boxing rounds"],
+  "cases": {
+  },
+  "more": "-- ラウンド counts rounds of something. It can be read with either gairaigo or kango.\nCounts: rounds, baseball rounds, boxing rounds, etc.\n"
+}
