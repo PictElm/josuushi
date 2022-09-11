@@ -1,0 +1,8 @@
+{
+  "repr": ["缶", "かん"],
+  "tags": ["soda cans", "beer cans", "tuna cans", "bean cans", "milk cans", "spray cans", "paint cans", "tea leaves in tins"],
+  "cases": {
+    "1": ["一缶", "いっかん/ひとか"],
+    "2": ["二缶", "にかん/ふたかん"]
+  }
+}

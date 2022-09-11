@@ -1,6 +1,6 @@
 {
   "repr": ["本", "ほん"],
-  "tags": ["cylinders", "cylindrical", "shows", "goals", "calls", "pens", "pencils", "asparagus", "soba", "darts", "firewood", "trees", "bamboo", "cords", "threads", "dumplings", "water wells", "injections", "folding fans", "eels", "tails", "nail clippers", "icicles", "fishing rods", "films", "chimneys", "tenugui", "trains", "sashes", "telephone poles", "cylindrical batteries", "bottles", "tires", "ribbons", "cacti", "soda cans", "teeth"],
+  "tags": ["cylinders", "cylindrical objects", "shows", "goals", "calls", "pens", "pencils", "asparagus", "soba", "darts", "firewood", "trees", "bamboo", "cords", "threads", "dumplings", "water wells", "injections", "folding fans", "eels", "tails", "nail clippers", "icicles", "fishing rods", "films", "chimneys", "tenugui", "trains", "sashes", "telephone poles", "cylindrical batteries", "bottles", "tires", "ribbons", "cacti", "soda cans", "teeth"],
   "cases": {
     "1": ["一本", "いっぽん"],
     "3": ["三本", "さんぼん"],

@@ -1,0 +1,8 @@
+{
+  "repr": ["玉", "たま"],
+  "tags": ["round objects", "ball-shaped", "beads", "testicles", "peaches", "melons", "watermelons", "tomatoes", "persimmons", "onions", "cabbages", "lettuces", "yakisoba", "udon", "soba", "ramen", "konnyaku", "balls of yarn", "balls of wire", "balls of string", "pachinko balls"],
+  "cases": {
+    "1": ["一玉", "ひとたま"],
+    "2": ["二玉", "ふたたま"]
+  }
+}
