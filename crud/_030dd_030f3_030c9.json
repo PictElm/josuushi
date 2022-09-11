@@ -1,7 +1,0 @@
-{
-  "repr": ["ポンド", "/"],
-  "tags": ["パウンド", "pound", "pounds"],
-  "cases": {
-  },
-  "more": "This is used to count pounds (the currency) and pounds (the weight).\nCounts: pounds\n"
-}

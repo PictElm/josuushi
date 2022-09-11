@@ -1,7 +1,0 @@
-{
-  "repr": ["報", "ほう"],
-  "tags": ["news", "reports", "information", "updates"],
-  "cases": {
-  },
-  "more": "This is used to count reports, news, and information.\nCounts: news, reports, information, updates, etc.\n"
-}

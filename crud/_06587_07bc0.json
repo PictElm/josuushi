@@ -1,7 +1,0 @@
-{
-  "repr": ["文節", "ぶんせつ"],
-  "tags": ["phrases", "clauses", "small sentence units"],
-  "cases": {
-  },
-  "more": "This one's used to count the smallest units of words in a sentence that still make sense. These are called either phrases or clauses in English.\nCounts: phrases, clauses, small sentence units\n"
-}

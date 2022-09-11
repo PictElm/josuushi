@@ -1,7 +1,0 @@
-{
-  "repr": ["語", "ご"],
-  "tags": ["words"],
-  "cases": {
-  },
-  "more": "This counter is used to count words. For example, if this article has 30,000 words, you could say 30,000語. Alternatively, you can use the gairaigo counter ワード, though I think 語 is more common.\nCounts: words\n"
-}

@@ -1,7 +1,0 @@
-{
-  "repr": ["辺", "へん"],
-  "tags": ["sides of polygons", "edges of tables", "borders of tatami mattresses", "height", "length or width measurements", "borders of a carpet or rug"],
-  "cases": {
-  },
-  "more": "<! Inline 41: a triangle>\nThis is used to count sides of polygons like triangles, squares, pentagons, etc. It's also used to count various edges and borders, like the edges of a table or the borders on a tatami mattress.\nCounts: sides of polygons, edges of tables, borders of tatami mattresses, height, length or width measurements, borders of a carpet or rug, etc.\n"
-}

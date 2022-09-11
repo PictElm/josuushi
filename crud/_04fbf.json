@@ -1,7 +1,0 @@
-{
-  "repr": ["便", "びん"],
-  "tags": ["flights", "ships shipping out", "long-distance bus trips", "deliveries", "instances of transportation", "flight numbers", "bus numbers"],
-  "cases": {
-  },
-  "more": "便 is used to count the number of flights, boats shipping out, long-distance buses, etc. over a period of time. It can also be used as an ordinal number suffix for delivery or transportation. If you're referring to a flight number, for example, you could use this ordinal number suffix.\nCounts: flights, ships shipping out, long-distance bus trips, deliveries, instances of transportation, flight numbers, bus numbers, etc.\n"
-}

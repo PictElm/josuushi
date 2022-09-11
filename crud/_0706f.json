@@ -1,7 +1,0 @@
-{
-  "repr": ["灯", "とう"],
-  "tags": ["electric lights", "gas lamps", "street lamps or lights", "lighthouse lights", "mercury lamps", "lightbulbs", "heaters"],
-  "cases": {
-  },
-  "more": "<! Inline 27: a street light/lamp>\nThis is used to count lights and light-related objects, like street lights.\nCounts: electric lights, gas lamps, street lamps or lights, lighthouse lights, mercury lamps, lightbulbs, heaters, etc.\n"
-}

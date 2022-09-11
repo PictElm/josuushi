@@ -1,9 +1,0 @@
-{
-  "repr": ["莢", "さや"],
-  "tags": ["pea shells", "pea pods", "pea hulls", "peanuts with shells", "shelled foods"],
-  "cases": {
-    "1": ["一莢", "ひとさや"],
-    "2": ["二莢", "ふたさや"],
-    "3": ["三莢", "さんさや/みっさや"]
-  }
-}

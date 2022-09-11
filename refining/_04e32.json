@@ -1,9 +1,0 @@
-{
-  "repr": ["串", "くし"],
-  "tags": ["skewers", "skewered foods", "skewered meats", "skewered vegetables", "food on skewers"],
-  "cases": {
-    "1": ["一串", "ひとくし"],
-    "2": ["二串", "ふたくし"],
-    "3": ["三串", "みくし/さんくし"]
-  }
-}

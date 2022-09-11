@@ -1,7 +1,0 @@
-{
-  "repr": ["ピース", "piece"],
-  "tags": ["pieces", "puzzle pieces", "cake pieces", "suit pieces", "dress pieces"],
-  "cases": {
-  },
-  "more": "ピース counts pieces of something. It can be read with either gairaigo or kango, but for four and above, kango is more common.\nCounts: pieces, puzzle pieces, cake pieces, suit pieces, dress pieces, etc.\n"
-}

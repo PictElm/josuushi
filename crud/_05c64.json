@@ -1,7 +1,0 @@
-{
-  "repr": ["層", "そう"],
-  "tags": ["layers", "cake layers", "building floors", "pagoda floors", "stupa floors"],
-  "cases": {
-  },
-  "more": "This one is used to count layers.\nCounts: layers, cake layers, building floors, pagoda floors, stupa floors, etc.\n"
-}

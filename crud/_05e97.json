@@ -1,7 +1,0 @@
-{
-  "repr": ["店", "てん"],
-  "tags": ["shops", "stores", "restaurants", "diners", "cafes", "branches", "chains", "store locations"],
-  "cases": {
-  },
-  "more": "This is used to count shops, restaurants, and branches or chains of companies. You can also use two other counters, 軒 (けん) and 店舗 (てんぽ), for shops and restaurants, but 軒 is not used for branches.\nCounts: shops, stores, restaurants, diners, cafes, branches, chains, store locations, etc.\n"
-}

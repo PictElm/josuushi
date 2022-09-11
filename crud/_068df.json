@@ -1,7 +1,0 @@
-{
-  "repr": ["棟", "とう/むね"],
-  "tags": ["buildings", "houses", "tenements", "warehouses", "factories", "garages", "storehouses", "outhouses", "huts", "sheds"],
-  "cases": {
-  },
-  "more": "棟 counts buildings and houses. It's also used to count buildings that humans do not live in, like garages, detached storehouses, and sheds. The kanji can be read either as とう or むね, but they're both about equally common. When the reading is とう, it uses the kango readings. When the reading is むね, one and two are wago and the rest are kango.\nCounts: buildings, houses, tenements, warehouses, factories, garages, storehouses, outhouses, huts, sheds, etc.\n"
-}

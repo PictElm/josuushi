@@ -1,7 +1,0 @@
-{
-  "repr": ["アイテム", "item"],
-  "tags": ["fashion items", "stable items"],
-  "cases": {
-  },
-  "more": "This is used to count items or products. While it's usually read with kango, the gairaigo counting method can be used for one through three as well.\nCounts: fashion items, stable items, etc.\n"
-}

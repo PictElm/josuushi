@@ -1,7 +1,0 @@
-{
-  "repr": ["通り", "とおり"],
-  "tags": ["ways", "methods", "procedures"],
-  "cases": {
-  },
-  "more": "This is used to count ways, methods, and procedures. One, two, and three ways can be read with wago or kango, but four and up are kango.\nCounts: ways, methods, procedures\n"
-}

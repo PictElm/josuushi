@@ -1,7 +1,0 @@
-{
-  "repr": ["グループ", "group"],
-  "tags": ["groups"],
-  "cases": {
-  },
-  "more": "This is used to count groups. The readings can be either gairaigo or wago for one and two, three can be either gairaigo or kango, and the rest are usually read with kango.\nCounts: groups\n"
-}
