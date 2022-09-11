@@ -25,7 +25,7 @@ git merge $from --no-ff || (
 
 git rm -rf --ignore-unmatch $build_result
 git stash pop || (
-  git add $build_result
+  git add -f $build_result
   git stash drop
 )
 git commit --amend --no-edit

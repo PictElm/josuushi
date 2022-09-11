@@ -15,6 +15,6 @@ fs
         return count++, [it.slice(0, -5), l];
       })
     )
-    .replaceAll(/['"\\]/g, '\\$&') + "'"
+    .replaceAll(/['\\]/g, '\\$&') + "'"
 );
 console.log(count + ' counters');
