@@ -1,0 +1,7 @@
+{
+  "repr": ["イニング", "inning"],
+  "tags": ["baseball innings"],
+  "cases": {
+  },
+  "more": "This is used to count innings in baseball. It's usually read with the gairaigo readings, but kango is used sometimes too.\nCounts: baseball innings\n"
+}

@@ -1,0 +1,7 @@
+{
+  "repr": ["駅", "えき"],
+  "tags": ["train stations", "bus stations"],
+  "cases": {
+  },
+  "more": "The word 駅 means \"station,\" as in a train station. As a counter, it counts train and bus stations. For the first two of either of those, use the wago counting method: 一駅 is ひとえき, 二駅 is ふたえき. After that, use the kango. You can also use the general counter 〜つ to count stations, especially when you're speaking.\nCounts: train stations, bus stations\n"
+}

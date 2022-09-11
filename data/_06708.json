@@ -1,6 +1,6 @@
 {
   "repr": ["月", "がつ"],
-  "tags": ["months"],
+  "tags": ["months", "calendar months"],
   "cases": {
     "4": ["四月", "しがつ"],
     "7": ["七月", "しちがつ"],

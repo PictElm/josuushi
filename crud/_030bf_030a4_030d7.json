@@ -1,0 +1,7 @@
+{
+  "repr": ["タイプ", "type"],
+  "tags": ["types", "kinds"],
+  "cases": {
+  },
+  "more": "タイプ counts types. It's usually read with kango, but gairaigo works too.\nCounts: types, kinds\n"
+}

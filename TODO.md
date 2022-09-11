@@ -1,10 +1,14 @@
 # TODO
 
+* add tofugu lookup? `https://www.tofugu.com/japanese/japanese-counter[s]-kana/`
+
 * about less common or such readings (eg. いっぴ, みったり, よったり, ...)
 * niti: distinguish tuitati (1st) and itiniti (1 day) (other such exception to account for?)
 * syuukan: is there a syuu (as in eg. 1st week?)
 * about suffix (eg. -kan, -me)
-* handle counters with multiple kanji
+* about prefix ヶ/箇
+* handle counters with multiple kanji -> probably will do multiple entries
+* more 'complex' tags (eg. with space in them) -> can just split into multiple tags
 
 ## see also
 

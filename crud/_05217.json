@@ -1,0 +1,7 @@
+{
+  "repr": ["列", "れつ"],
+  "tags": ["lines", "queues", "armies in file", "rows of seats"],
+  "cases": {
+  },
+  "more": "This counter is used to count lines or queues of people. It can also be used to count rows of things in lines.\nCounts: lines, queues, armies in file, rows of seats, etc.\n"
+}

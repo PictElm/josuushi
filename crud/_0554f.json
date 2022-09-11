@@ -1,0 +1,7 @@
+{
+  "repr": ["問", "もん"],
+  "tags": ["questions and problems in a quiz", "test", "exam", "textbook", "worksheet"],
+  "cases": {
+  },
+  "more": "問 is used to count questions or problems in a test, exam, quiz, textbook, etc. It can also be used with the ordinal number prefix 第 to indicate question number. For example, the third question on a quiz would be 第３問. You can do the same thing with the ordinal number suffix 目. The hundredth question would be １００問目.\nCounts: questions and problems in a quiz, test, exam, textbook, worksheet, etc.\n"
+}

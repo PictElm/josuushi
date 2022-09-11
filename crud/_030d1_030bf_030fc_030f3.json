@@ -1,0 +1,7 @@
+{
+  "repr": ["パターン", "pattern"],
+  "tags": ["patterns", "ways"],
+  "cases": {
+  },
+  "more": "パターン is used to count patterns.\nCounts: patterns, ways\n"
+}

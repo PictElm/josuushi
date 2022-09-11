@@ -1,0 +1,7 @@
+{
+  "repr": ["舗", "ほ"],
+  "tags": ["folded maps", "folded documents"],
+  "cases": {
+  },
+  "more": "<! inline 57: a folded map>\nThis is used to count papers that are usually folded, but are unfolded when used, like maps. In fact, it's used mostly when counting maps!\nCounts: folded maps, folded documents, etc.\n"
+}

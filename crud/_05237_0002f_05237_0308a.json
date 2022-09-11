@@ -1,0 +1,7 @@
+{
+  "repr": ["刷/刷り", "すり"],
+  "tags": ["printings", "pressings", "impressions"],
+  "cases": {
+  },
+  "more": "This is used to count specific printings or pressings of printed materials, including novels, encyclopedias, and the like. Combine it with the ordinal number prefix 第 to specify the exact impression or printing of a book. One and two are read using wago, three can be wago or kango, and the rest are kango.\nIf you want to count the number of copies made of a specific printing, use 部 (ぶ).\nCounts: printings, pressings, impressions\n"
+}

@@ -1,0 +1,8 @@
+{
+  "repr": ["石", "せき"],
+  "tags": ["stones", "pebbles", "small rocks"],
+  "cases": {
+    "1": ["一石", "いっせき"]
+  },
+  "more": "probably has more cases"
+}

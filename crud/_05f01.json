@@ -1,0 +1,7 @@
+{
+  "repr": ["弁", "べん"],
+  "tags": ["petals"],
+  "cases": {
+  },
+  "more": "<! Inline 42: the head of a flower with its petals attached>\n弁 counts petals that are still attached to a flower. If you want to get technical, it's the petals that are still attached to the calyx (sepals), not loose, individual petals.\nCounts: petals (with calyx or sepals)\n"
+}

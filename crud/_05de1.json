@@ -1,0 +1,7 @@
+{
+  "repr": ["巡", "じゅん"],
+  "tags": ["rounds", "loops", "tours", "cycles", "laps", "revolutions", "rounds of order"],
+  "cases": {
+  },
+  "more": "<! Inline 12: a circular track>\nThe counter 巡 is used to count rounds, which includes physical rounds such as walking, running, or touring in a loop around a location, as well as sequential order, such as a team's batting order in a baseball game.\nCounts: rounds, loops, tours, cycles, laps, revolutions, rounds of order\n"
+}

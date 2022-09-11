@@ -1,0 +1,7 @@
+{
+  "repr": ["歳", "さい"],
+  "tags": ["age in years"],
+  "cases": {
+  },
+  "more": "The 歳 counter is used to count age. This works for people, animals, and more. Note that there is another (simpler) kanji for the same thing, which is 才. Technically they both make sense, but 歳 is more correct, if you're able to use it.\nCounts: age in years\n"
+}

@@ -21,6 +21,7 @@ $ serve &
 
 - [Tae Kim - Numbers and Counting](http://guidetojapanese.org/learn/grammar/numbers)
 - [American / Japanese Higher Numbers](https://www.trussel.com/jnumbers.htm)
+- [Tofugu - 350 Japanese Counters](https://www.tofugu.com/japanese/japanese-counters-list/)
 
 ---
 > I don't even know if that's the right word for it

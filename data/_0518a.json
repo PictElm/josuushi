@@ -1,6 +1,6 @@
 {
   "repr": ["冊", "さつ"],
-  "tags": ["books"],
+  "tags": ["books", "book collections", "albums", "notebooks", "memo pads", "musical scores", "catalogs", "magazines", "dictionaries", "publications", "documents", "booklets"],
   "cases": {
     "1": ["一冊", "いっさつ"],
     "8": ["八冊", "はっさつ"],
