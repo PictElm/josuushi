@@ -95,7 +95,7 @@ insertByTags (ref, tags) acc =
         bcc
     )
     acc
-    tags
+    (List.concatMap String.words tags)
 
 counterIndexDecoder : Json.Decoder (List (String, List String))
 counterIndexDecoder =
@@ -415,7 +415,7 @@ potentialPlurals c =
         'n'::'o'::t -> ['a'::t           |> List.reverse |> String.fromList]
         _ -> []
       , if String.contains (String.fromChar last) "shxzo"
-        then [c ++ "es"] ++ (if 's' == onetolast || 'z' == onetolast
+        then (c ++ "es") :: (if 's' == onetolast || 'z' == onetolast
           then [c ++ String.cons onetolast "es"]
           else [])
         else [c ++ "s"]
