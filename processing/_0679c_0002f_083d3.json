@@ -1,8 +1,0 @@
-{
-  "repr": ["果/菓", "か"],
-  "tags": ["fruits", "peaches", "pears", "apples", "persimmons", "eggplants", "slices"],
-  "cases": {
-    "1": ["一果", "いっか"]
-  },
-  "more": "TODO: probably has more cases, and deal with it having 2 possible writings"
-}
