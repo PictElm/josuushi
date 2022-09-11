@@ -3,5 +3,5 @@
   "tags": ["troops", "corps", "units", "parties", "expedition teams", "medical corps", "hospital units"],
   "cases": {
   },
-  "more": "-- This is used to count corps, units, parties, troops, and so on. Groups of Boy Scouts and Girl Scouts that go on expeditions are all included in this counter's uses.\nCounts: troops, corps, units, parties, expedition teams, medical corps, hospital units, etc.\n"
+  "more": "This is used to count corps, units, parties, troops, and so on. Groups of Boy Scouts and Girl Scouts that go on expeditions are all included in this counter's uses.\nCounts: troops, corps, units, parties, expedition teams, medical corps, hospital units, etc.\n"
 }

@@ -3,5 +3,5 @@
   "tags": ["warriors on horseback", "horses"],
   "cases": {
   },
-  "more": "-- This is used to count knights and warriors on horseback. It can be used to count horses without riders, as well.\nCounts: warriors on horseback, horses\n"
+  "more": "This is used to count knights and warriors on horseback. It can be used to count horses without riders, as well.\nCounts: warriors on horseback, horses\n"
 }

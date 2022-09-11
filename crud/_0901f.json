@@ -3,5 +3,5 @@
   "tags": ["vehicle gears", "bicycle gears"],
   "cases": {
   },
-  "more": "-- This is an ordinal number suffix for vehicle and bicycle gears (used to express, for example, shifting into fourth gear).\nCounts: vehicle gears, bicycle gears\n"
+  "more": "This is an ordinal number suffix for vehicle and bicycle gears (used to express, for example, shifting into fourth gear).\nCounts: vehicle gears, bicycle gears\n"
 }

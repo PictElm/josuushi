@@ -3,5 +3,5 @@
   "tags": ["haiku", "expressions", "passages of writing", "words", "phrases"],
   "cases": {
   },
-  "more": "-- This counter is used for counting haiku, phrases, expressions, or passages of writing.\nCounts: haiku, expressions, passages of writing, words, phrases, etc.\n"
+  "more": "This counter is used for counting haiku, phrases, expressions, or passages of writing.\nCounts: haiku, expressions, passages of writing, words, phrases, etc.\n"
 }

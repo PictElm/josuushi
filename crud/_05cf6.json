@@ -3,5 +3,5 @@
   "tags": ["islands"],
   "cases": {
   },
-  "more": "-- This counter counts islands, especially in writing.\nCounts: islands\n"
+  "more": "This counter counts islands, especially in writing.\nCounts: islands\n"
 }

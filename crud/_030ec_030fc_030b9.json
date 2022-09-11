@@ -3,5 +3,5 @@
   "tags": ["races"],
   "cases": {
   },
-  "more": "-- レース is used to count races.\nCounts: races\n"
+  "more": "レース is used to count races.\nCounts: races\n"
 }

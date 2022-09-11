@@ -3,5 +3,5 @@
   "tags": ["bullets", "events", "projects", "plans", "ideas"],
   "cases": {
   },
-  "more": "-- <! Inline 22: a bullet>\nThis is used to count bullets. It’s also used to count commercial events and campaigns (that come out quickly, one after another, like gunshots). It's common to combine this counter with the ordinal number prefix 第 for when you want to refer to a specific event, like \"the first event of this series.\"\nCounts: bullets, events, projects, plans, ideas, etc.\n"
+  "more": "<! Inline 22: a bullet>\nThis is used to count bullets. It’s also used to count commercial events and campaigns (that come out quickly, one after another, like gunshots). It's common to combine this counter with the ordinal number prefix 第 for when you want to refer to a specific event, like \"the first event of this series.\"\nCounts: bullets, events, projects, plans, ideas, etc.\n"
 }

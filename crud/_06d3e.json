@@ -3,5 +3,5 @@
   "tags": ["factions", "denominations", "groups", "literature groups", "schools of poets", "political parties", "Buddhist sects"],
   "cases": {
   },
-  "more": "-- This is used to count groups, parties, schools, factions, denominations, and sects.\nCounts: factions, denominations, groups, literature groups, schools of poets, political parties, Buddhist sects, etc.\n"
+  "more": "This is used to count groups, parties, schools, factions, denominations, and sects.\nCounts: factions, denominations, groups, literature groups, schools of poets, political parties, Buddhist sects, etc.\n"
 }

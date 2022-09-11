@@ -3,5 +3,5 @@
   "tags": ["hits in baseball", "golf strokes", "tennis swings", "table tennis swings", "punches", "hits"],
   "cases": {
   },
-  "more": "-- This is used to count hits in baseball (that actually hit the ball), strokes in golf, and swings in tennis and table tennis.\nCounts: hits in baseball, golf strokes, tennis swings, table tennis swings, punches, hits, etc.\n"
+  "more": "This is used to count hits in baseball (that actually hit the ball), strokes in golf, and swings in tennis and table tennis.\nCounts: hits in baseball, golf strokes, tennis swings, table tennis swings, punches, hits, etc.\n"
 }

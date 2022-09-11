@@ -3,5 +3,5 @@
   "tags": ["editions", "impressions", "printings", "issues"],
   "cases": {
   },
-  "more": "-- This is used to count editions, impressions, printings, and magazine issues.\nCounts: editions, impressions, printings, issues, etc.\n"
+  "more": "This is used to count editions, impressions, printings, and magazine issues.\nCounts: editions, impressions, printings, issues, etc.\n"
 }

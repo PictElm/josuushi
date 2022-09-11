@@ -3,5 +3,5 @@
   "tags": ["shops", "stores", "restaurants", "diners", "cafes", "branches", "chains", "store locations"],
   "cases": {
   },
-  "more": "-- Like the previous counter, this is used to count shops, restaurants, and branches or chains of companies. You can use two other Japanese counters, 店 (てん) and 軒 (けん), for shops and restaurants, but 軒 is not used for branches.\nCounts: shops, stores, restaurants, diners, cafes, branches, chains, store locations, etc.\n"
+  "more": "Like the previous counter, this is used to count shops, restaurants, and branches or chains of companies. You can use two other Japanese counters, 店 (てん) and 軒 (けん), for shops and restaurants, but 軒 is not used for branches.\nCounts: shops, stores, restaurants, diners, cafes, branches, chains, store locations, etc.\n"
 }

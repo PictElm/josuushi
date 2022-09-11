@@ -3,5 +3,5 @@
   "tags": ["all rooms", "like back rooms", "closets", "storage rooms", "hotel rooms", "bedrooms", "bathrooms", "living rooms"],
   "cases": {
   },
-  "more": "-- 部屋 means \"room,\" and as a counter it counts rooms. For example, if you wanted to count the number of bathrooms in your house, you could use this. For one, two, and sometimes three rooms, use the wago counting method. Beyond that use kango.\nCounts: all rooms, like back rooms, closets, storage rooms, hotel rooms, bedrooms, bathrooms, living rooms, etc.\n"
+  "more": "部屋 means \"room,\" and as a counter it counts rooms. For example, if you wanted to count the number of bathrooms in your house, you could use this. For one, two, and sometimes three rooms, use the wago counting method. Beyond that use kango.\nCounts: all rooms, like back rooms, closets, storage rooms, hotel rooms, bedrooms, bathrooms, living rooms, etc.\n"
 }

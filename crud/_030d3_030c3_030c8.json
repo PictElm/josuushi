@@ -3,5 +3,5 @@
   "tags": ["bits"],
   "cases": {
   },
-  "more": "-- ビット counts bits, like in 8-bit and 16-bit. The readings can be either gairaigo or kango, but for four and above it's normally kango.\nCounts: bits\n"
+  "more": "ビット counts bits, like in 8-bit and 16-bit. The readings can be either gairaigo or kango, but for four and above it's normally kango.\nCounts: bits\n"
 }

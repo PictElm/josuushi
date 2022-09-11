@@ -3,5 +3,5 @@
   "tags": ["patterns", "ways"],
   "cases": {
   },
-  "more": "-- パターン is used to count patterns.\nCounts: patterns, ways\n"
+  "more": "パターン is used to count patterns.\nCounts: patterns, ways\n"
 }

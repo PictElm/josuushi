@@ -3,5 +3,5 @@
   "tags": ["sentences"],
   "cases": {
   },
-  "more": "-- This word is used to count sentences, which is convenient since it also means \"sentence.\"\nCounts: sentences\n"
+  "more": "This word is used to count sentences, which is convenient since it also means \"sentence.\"\nCounts: sentences\n"
 }

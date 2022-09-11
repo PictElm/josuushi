@@ -3,5 +3,5 @@
   "tags": ["criminal records", "jail records", "prison records"],
   "cases": {
   },
-  "more": "-- This is used to count criminal records and jail records.\nCounts: criminal records, jail records, prison records\n"
+  "more": "This is used to count criminal records and jail records.\nCounts: criminal records, jail records, prison records\n"
 }

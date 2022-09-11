@@ -19,6 +19,7 @@ while len(rest) and "--" != rest[0]:
   except:
     tags.append(rest.pop(0))
 if "--" == rest[0]:
+  rest.pop(0)
   cases = []
   more = " ".join(rest)
 else:

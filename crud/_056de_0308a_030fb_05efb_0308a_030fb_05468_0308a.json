@@ -3,5 +3,5 @@
   "tags": ["the number of times something goes around something else", "rounds", "circuits", "laps"],
   "cases": {
   },
-  "more": "-- This counter counts the number of times something has gone around something else, and rounds—but only rounds of one to three, and they use the wago readings. For rounds of four or more, we use the counter 周 (しゅう). There's a lot more to learn about these, so read our article on the 回り counter (coming soon).\nCounts: the number of times something goes around something else, rounds, circuits, laps, etc.\n"
+  "more": "This counter counts the number of times something has gone around something else, and rounds—but only rounds of one to three, and they use the wago readings. For rounds of four or more, we use the counter 周 (しゅう). There's a lot more to learn about these, so read our article on the 回り counter (coming soon).\nCounts: the number of times something goes around something else, rounds, circuits, laps, etc.\n"
 }

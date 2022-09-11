@@ -3,5 +3,5 @@
   "tags": ["train lines", "bus routes"],
   "cases": {
   },
-  "more": "-- 路線 counts train lines and bus routes.\nCounts: train lines, bus routes\n"
+  "more": "路線 counts train lines and bus routes.\nCounts: train lines, bus routes\n"
 }

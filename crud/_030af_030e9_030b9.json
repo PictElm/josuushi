@@ -3,5 +3,5 @@
   "tags": ["school classes", "classes", "ranks"],
   "cases": {
   },
-  "more": "-- This is used to count school classes, or classes as in levels or ranks. For the former, the readings for one and two are wago, and the rest are kango. For the latter, the readings are usually in gairaigo (ワンクラス, ツークラス, etc.), but wago and kango work as well.\nCounts: school classes, classes, ranks\n"
+  "more": "This is used to count school classes, or classes as in levels or ranks. For the former, the readings for one and two are wago, and the rest are kango. For the latter, the readings are usually in gairaigo (ワンクラス, ツークラス, etc.), but wago and kango work as well.\nCounts: school classes, classes, ranks\n"
 }

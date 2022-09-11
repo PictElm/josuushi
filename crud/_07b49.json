@@ -3,5 +3,5 @@
   "tags": ["prize numbers", "places in a race", "engineer ranks", "officer ranks", "train carriage classes", "passenger classes", "star magnitudes"],
   "cases": {
   },
-  "more": "-- This is an ordinal number suffix for orders, classes, and grades.\nCounts: prize numbers, places in a race, engineer ranks, officer ranks, train carriage classes, passenger classes, star magnitudes, etc.\n"
+  "more": "This is an ordinal number suffix for orders, classes, and grades.\nCounts: prize numbers, places in a race, engineer ranks, officer ranks, train carriage classes, passenger classes, star magnitudes, etc.\n"
 }

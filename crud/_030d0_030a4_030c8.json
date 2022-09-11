@@ -3,5 +3,5 @@
   "tags": ["bytes"],
   "cases": {
   },
-  "more": "-- This is used to count bytes.\nCounts: bytes\n"
+  "more": "This is used to count bytes.\nCounts: bytes\n"
 }

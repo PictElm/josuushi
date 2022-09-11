@@ -3,5 +3,5 @@
   "tags": ["mountain ranges", "series of mountain peaks"],
   "cases": {
   },
-  "more": "-- This is used to count mountain ranges and mountain peaks in succession.\nCounts: mountain ranges, series of mountain peaks\n"
+  "more": "This is used to count mountain ranges and mountain peaks in succession.\nCounts: mountain ranges, series of mountain peaks\n"
 }

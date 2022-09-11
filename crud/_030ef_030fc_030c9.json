@@ -3,5 +3,5 @@
   "tags": ["words"],
   "cases": {
   },
-  "more": "-- This is used to count words. It's usually read with kango, but the gairaigo readings can be used as well.\nCounts: words\n"
+  "more": "This is used to count words. It's usually read with kango, but the gairaigo readings can be used as well.\nCounts: words\n"
 }

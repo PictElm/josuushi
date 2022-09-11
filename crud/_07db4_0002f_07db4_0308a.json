@@ -3,5 +3,5 @@
   "tags": ["sets of coupons", "sets of discount tickets", "sets of meal vouchers", "sets of stamps"],
   "cases": {
   },
-  "more": "-- This is used to count sets of papers connected together. This includes small booklets of coupons, pages with multiple discount tickets, or meal vouchers that come attached to one another. 一綴り can be used to count any number of connected items in one packet, as long as they come attached. One or two sets will be counted with the wago readings, three can be either, then the rest use kango.\nCounts: sets of coupons, sets of discount tickets, sets of meal vouchers, sets of stamps, etc.\n"
+  "more": "This is used to count sets of papers connected together. This includes small booklets of coupons, pages with multiple discount tickets, or meal vouchers that come attached to one another. 一綴り can be used to count any number of connected items in one packet, as long as they come attached. One or two sets will be counted with the wago readings, three can be either, then the rest use kango.\nCounts: sets of coupons, sets of discount tickets, sets of meal vouchers, sets of stamps, etc.\n"
 }

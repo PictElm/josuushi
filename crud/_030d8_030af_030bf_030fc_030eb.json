@@ -3,5 +3,5 @@
   "tags": ["hectares"],
   "cases": {
   },
-  "more": "-- This is used to count hectares.\nCounts: hectares\n"
+  "more": "This is used to count hectares.\nCounts: hectares\n"
 }
