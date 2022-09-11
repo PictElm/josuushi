@@ -1,9 +1,5 @@
 # TODO
 
-* home page: usage examples?
-* result page: when no result (also: default to the tu counter?)
-* (loading page: what is that!)
-
 * about less common or such readings (eg. いっぴ, みったり, よったり, ...)
 * niti: distinguish tuitati (1st) and itiniti (1 day) (other such exception to account for?)
 * syuukan: is there a syuu (as in eg. 1st week?)

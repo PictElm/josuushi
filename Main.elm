@@ -596,7 +596,7 @@ processQuery index query =
   in
     ( num_pair
     , if List.isEmpty tags
-      then Dict.get "thing" index.byTag |> Maybe.withDefault [] --[ "_07b87" ] --[ "tu" ] -- YYY: default when no counter (hm...)
+      then Dict.get "things" index.byTag |> Maybe.withDefault [] --[ "_07b87" ] --[ "tu" ] -- YYY: default when no counter (hm...)
       else List.foldr
         (\tag -> \dct ->
           Dict.get tag index.byTag
@@ -702,7 +702,27 @@ viewHomePage model =
     [ Attr.class "page-home" ]
     [ Html.p
       []
-      [ Html.text (String.fromInt (Dict.size model.counters.byRef) ++ " counters in database") ]
+      [ Html.text "Hello! Use the search bar to query a counter for something, for example:"
+      , Html.ul
+        []
+        (List.map
+          (\(t, q) ->
+            Html.li
+              []
+              [ Html.text (t ++ ": ")
+              , Html.a [ Attr.href ("?q=" ++ q) ] [ Html.text q ]
+              ])
+          [ ("counter for cats", "cats")
+          , ("counter for round objects", "round objects")
+          , ("exactly 7 days", "7 days")
+          , ("using a kanji", "枚")
+          , ("or its reading in kana or romaji", "まい")
+          , ("reading of a number (will use the 〜つ)", "262816")
+          , ("if 'peacocks' does not find anything, try with a more general", "animals")
+          ])
+      , Html.br [] []
+      , Html.text (String.fromInt (Dict.size model.counters.byRef) ++ " counters in database.")
+      ]
     ]
 
 viewLoading : Model -> Html.Html Message
@@ -711,48 +731,86 @@ viewLoading model =
     [ Attr.class "page-loading" ]
     [ Html.p
       []
-      [ Html.text ("looking up a counter for " ++ String.join " / " model.parsedTags) ]
+      [ Html.text ("fetching counter data for " ++ String.join ", " model.parsedTags) ]
     ]
 
-viewNotFound : Model -> Html.Html Message
-viewNotFound model =
+viewNotFound : Model -> Http.Error -> Html.Html Message
+viewNotFound model err =
   Html.div
     [ Attr.class "page-not-found" ]
     [ Html.p
       []
-      [ Html.text ("could not find any counter for " ++ String.join " / " model.parsedTags) ]
+      <| List.concat
+        [ [ Html.text "Oops, an error occurred when trying to get counter data."
+          , Html.br [] []
+          , Html.text "Dev hint: trying to fetch "
+          ]
+        , List.map
+          (\t -> Html.code [] [ Html.text t ])
+          model.parsedTags
+          |> List.intersperse (Html.text ", ")
+        , [ Html.text "."
+          , Html.br [] []
+          , Html.text "HTTP error: "
+          , Html.code
+            []
+            [ Html.text
+              (case err of
+                Http.BadUrl str    -> ("bad URL: " ++ str)
+                Http.Timeout       -> "timeout"
+                Http.NetworkError  -> "network error"
+                Http.BadStatus int -> ("bad status: " ++ String.fromInt int)
+                Http.BadBody str   -> ("bad body: " ++ str)
+              )
+            ]
+          ]
+        ]
     ]
 
 viewFound : Model -> List Counter -> Html.Html Message
 viewFound model list =
   Html.div
-    [ Attr.class "page-found" ] -- TODO: when 0 results, NotFound is actualy when error occured
-    [ Html.p
-      []
-      [ Html.text (String.fromInt (List.length list) ++ " result" ++ (if 1 == List.length list then "" else "s")) ]
-    , Html.input
-      [ Attr.id "number-input"
-      , Attr.placeholder "number"
-      , Attr.value model.numberInput
-      , Event.onInput UpdateNumber
-      ]
-      []
-    , Html.ol
-        []
-        (List.map
-          (\counter ->
-            Html.li
-              []
-              [ viewResult model.number counter ]
-          )
-          list)
-    ] -- #number-input
+    [ Attr.class "page-found" ]
+    (if 0 == List.length list
+      then
+        [ Html.p
+          []
+          [ Html.text "Could not find a suitable counter for the given query... try using more general terms, for example "
+          , Html.strong [] [ Html.text "papers" ]
+          , Html.text " or "
+          , Html.strong [] [ Html.text "flat" ]
+          , Html.text " instead of "
+          , Html.strong [] [ Html.text "flyers" ]
+          , Html.text "."
+          ]
+        ]
+      else
+        [ Html.p
+          []
+          [ Html.text (String.fromInt (List.length list) ++ " result" ++ (if 1 == List.length list then "" else "s")) ]
+        , Html.input
+          [ Attr.id "number-input"
+          , Attr.placeholder "number"
+          , Attr.value model.numberInput
+          , Event.onInput UpdateNumber
+          ]
+          []
+        , Html.ol
+            []
+            (List.map
+              (\counter ->
+                Html.li
+                  []
+                  [ viewResult model.number counter ]
+              )
+              list)
+        ]) -- #number-input
 
 --- application
 type Page
   = HomePage
   | Loading
-  | NotFound
+  | NotFound Http.Error
   | Found (List Counter)
 
 type alias Model =
@@ -839,9 +897,9 @@ update msg model =
             }
           , Cmd.none
           )
-        Err _ ->
+        Err err ->
           ( { model
-            | current = NotFound
+            | current = NotFound err
             }
           , Cmd.none
           )
@@ -866,10 +924,13 @@ view model =
     ]
     [ Html.header
       []
-      [ Html.h1
-        []
-        [ viewRuby (Ruby "助数詞" "じょすうし")
-        , Html.text " — counters"
+      [ Html.a
+        [ Attr.href "/" ]
+        [ Html.h1
+          []
+          [ viewRuby (Ruby "助数詞" "じょすうし")
+          , Html.text " — counters"
+          ]
         ]
       , Html.button
         [ Attr.id "theme-change"
@@ -898,7 +959,7 @@ view model =
       [ case model.current of
         HomePage   -> viewHomePage model
         Loading    -> viewLoading model
-        NotFound   -> viewNotFound model
+        NotFound e -> viewNotFound model e
         Found list -> viewFound model list
       ] -- #page-content
     , Html.hr [] []

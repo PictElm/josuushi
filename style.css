@@ -91,6 +91,10 @@ header {
     display: flex;
     justify-content: space-between;
 }
+header a {
+    color: var(--c);
+    text-decoration: none;
+}
 header h1 {
     font-size: 1.5em;
     margin: 0;
@@ -135,7 +139,7 @@ form#search-bar button::before {
 }
 
 #page-content {
-    margin: 10vw 20vw;
+    margin: 5em 20vw;
 }
 @media (max-width: 720px) {
     #page-content {
