@@ -1,7 +1,6 @@
 {
   "repr": ["紙", "し"],
-  "tags": ["newspapers"],
+  "tags": ["flat", "sheets", "newspapers"],
   "cases": {
-  },
-  "more": "# https://www.tofugu.com/japanese/japanese-counter-mai/  The kanji 紙 means \"paper,\" and its counter version is used to count newspapers and other things like paper that come in flat sheets 枚 (まい).\nCounts: newspapers\n"
+  }
 }

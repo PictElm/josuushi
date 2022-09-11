@@ -1,0 +1,8 @@
+{
+  "repr": ["片", "ひら"],
+  "tags": ["thin", "flat", "papers", "petals", "leaves", "tatami mats", "straw mats", "confetti", "snowflakes"],
+  "cases": {
+    "1": ["一片", "ひとひら"],
+    "2": ["二片", "ふたひら"]
+  }
+}

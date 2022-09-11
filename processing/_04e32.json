@@ -1,7 +1,9 @@
 {
   "repr": ["串", "くし"],
-  "tags": ["skewered foods", "skewered meats", "skewered vegetables", "any kind of food on skewers"],
+  "tags": ["skewers", "skewered foods", "skewered meats", "skewered vegetables", "food on skewers"],
   "cases": {
-  },
-  "more": "# https://www.tofugu.com/japanese/japanese-counter-hon/  As a word, 串 means \"skewer,\" and as a counter it counts food that comes on skewers. Use the wago readings for one and two skewers, kango or wago for three, and straight kango for all the rest. (When there's no food skewered on them, skewers are normally counted with the long-and-skinny-thing Japanese counter 本.)\nCounts: skewered foods, skewered meats, skewered vegetables, any kind of food on skewers\n"
+    "1": ["一串", "ひとくし"],
+    "2": ["二串", "ふたくし"],
+    "3": ["三串", "みくし/さんくし"]
+  }
 }

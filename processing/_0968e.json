@@ -1,7 +1,11 @@
 {
   "repr": ["階", "かい"],
-  "tags": ["a building's floors"],
+  "tags": ["floors", "levels", "a building's floors"],
   "cases": {
-  },
-  "more": "# https://www.tofugu.com/japanese/japanese-counter-kai-floors/  The 階 counter counts building floors. Which floor would you like to go up to? The 100th floor (１００階) or the 3rd floor (３階)? Or why don't you just forget all that and come on up to ４２階 instead?\nTake your knowledge of 階 to the next level (or floor) by reading our in-depth write-up about it.\nCounts: a building's floors\n"
+    "1": ["一階", "いっかい"],
+    "3": ["三階", "さんかい/さんがい"],
+    "6": ["六階", "ろっかい"],
+    "8": ["八階", "はちかい/はっかい"],
+    "10": ["十階", "じゅっかい"]
+  }
 }

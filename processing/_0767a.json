@@ -2,6 +2,14 @@
   "repr": ["発", "はつ"],
   "tags": ["bullets", "bullet marks", "explosives", "fireworks", "shots fired", "farts", "punches", "kicks", "bombs", "cannons", "missiles", "rockets", "tennis shots", "kendo attacks", "baseball hits", "home runs", "sex", "jokes"],
   "cases": {
-  },
-  "more": "# https://www.tofugu.com/japanese/japanese-counters-hatsu/  発 counts bullets, bullet marks, explosives, fireworks, shots fired (including farts), and a lot more. There are even more details to learn in our full article on this counter.\nCounts: bullets, bullet marks, explosives, fireworks, shots fired, farts, punches, kicks, bombs, cannons, missiles, rockets, tennis shots, kendo attacks, baseball hits, home runs, sex, jokes, etc.\n"
+    "1": ["一発", "いっぱつ"],
+    "3": ["三発", "さんぱつ/さんはつ"],
+    "4": ["四発", "よんぱつ/よんはつ"],
+    "6": ["六発", "ろっぱつ/ろくはつ"],
+    "8": ["八発", "はっぱつ/はちはつ"],
+    "10": ["十発", "じゅっぱつ"],
+    "100": ["百発", "ひゃっぱつ/ひゃくはつ"],
+    "1000": ["千発", "せんぱつ/せんはつ"],
+    "10000": ["万発", "まんぱつ/まんはつ"]
+  }
 }

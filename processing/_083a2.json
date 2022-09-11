@@ -2,6 +2,8 @@
   "repr": ["莢", "さや"],
   "tags": ["pea shells", "pea pods", "pea hulls", "peanuts with shells", "shelled foods"],
   "cases": {
-  },
-  "more": "# https://www.tofugu.com/japanese/japanese-counter-tsu/  The word 莢 means \"pod,\" \"hull,\" or \"the shell of a pea.\" The counter version counts them all. While it's more common to use the general counter 〜つ or 個, you'll still see 莢 used. When counting with 莢, use wago for one and two, kango or wago for three, and kango for four and above.\nCounts: pea shells, pea pods, pea hulls, peanuts with shells, shelled foods, etc.\n"
+    "1": ["一莢", "ひとさや"],
+    "2": ["二莢", "ふたさや"],
+    "3": ["三莢", "さんさや/みっさや"]
+  }
 }

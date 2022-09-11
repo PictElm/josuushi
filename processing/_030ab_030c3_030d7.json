@@ -1,7 +1,13 @@
 {
-  "repr": ["カップ", "cup"],
+  "repr": ["カップ", "かっぷ"],
   "tags": ["cups", "measuring cups", "ice cream cups", "pudding in cups", "golf holes"],
   "cases": {
-  },
-  "more": "# https://www.tofugu.com/japanese/japanese-counters-kappu/  This is used to count cups, specifically the unit cups. Like カット, you can use any of the three reading methods with it. Learn more in our in-depth article.\nCounts: cups, measuring cups, ice cream cups, pudding in cups, golf holes, etc.\n"
+    "-1": ["一カップ", "いっかっぷ/いちかっぷ/ひとかっぷ"],
+    "-2": ["二カップ", "にかっぷ/ふたかっぷ"],
+    "1": ["一カップ", "いっかっぷ/いちかっぷ"],
+    "6": ["六カップ", "ろっかっぷ/ろくかっぷ"],
+    "8": ["八カップ", "はっかっぷ/はちかっぷ"],
+    "10": ["十カップ", "じゅっかっぷ"],
+    "100": ["百カップ", "ひゃっかっぷ"]
+  }
 }
