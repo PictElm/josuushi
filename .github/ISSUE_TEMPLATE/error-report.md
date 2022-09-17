@@ -1,6 +1,6 @@
 ---
 name: Error report
-about: This on has an error.
+about: This one has an error.
 title: ''
 labels: error
 assignees: ''
