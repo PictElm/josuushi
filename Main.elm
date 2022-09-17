@@ -52,7 +52,9 @@ rubyCat l =
   List.foldl (\b -> \a ->
     Ruby
       (a.text ++ b.text)
-      (a.floating ++ b.floating)
+      (String.split "/" a.floating
+        |> List.concatMap (\p -> String.split "/" b.floating |> List.map ((++) p))
+        |> String.join "/") -- YYY: gets dumb for larg numbers, but that will do
   ) (Ruby "" "") l
 
 rubyFromList : List String -> Ruby
@@ -117,16 +119,22 @@ counterIndex json =
 viewRuby : Ruby -> Html.Html Message
 viewRuby rb =
   Html.span []
-    <| List.map
-      (\it ->
-        Html.ruby []
-          [ Html.text rb.text
-          , Html.rp [] [ Html.text "" ] -- XXX: it should have an openning parenthesis here, but when it does double-clicking the main ruby text also comprises it which is very annoying and not expected behavior; what sane browser nowaday does not fully support the ruby element anyway?!
-          , Html.rt [] [ Html.text it ]
-          , Html.rp [] [ Html.text ")" ]
-          ]
-      )
-      (String.split "/" rb.floating)
+    <| (
+      List.map
+        (\it ->
+          Html.ruby []
+            [ Html.text rb.text
+            , Html.text "​"
+            , Html.rp [] [ Html.text "(" ]
+            , Html.text "​"
+            , Html.rt [] [ Html.text it ]
+            , Html.text "​"
+            , Html.rp [] [ Html.text ")" ]
+            ] -- YYY: the seemingly empty texts above are 0-width spaces; for some reason it behaves better
+        )
+        (String.split "/" rb.floating)
+        |> List.intersperse (Html.text "・")
+    )
 
 ifBelow : AnInt -> List (AnInt, AnInt -> a) -> (AnInt -> a) -> a
 ifBelow an below above =
@@ -686,7 +694,7 @@ viewResult num counter =
                     [ Attr.class (if is_ex then "exception" else "regular") ]
                     [ Html.td [] [ Html.text (String.fromInt n) ]
                     , Html.td [] [ Html.text ruby.text ]
-                    , Html.td [] [ Html.text ruby.floating ]
+                    , Html.td [] [ Html.text (String.split "/" ruby.floating |> String.join "・") ]
                     ]
                 )
                 (List.range 1 10 ++ List.filter (\n -> 10 < n) (Dict.keys counter.cases))
@@ -971,17 +979,17 @@ view model =
             """
               This page is made available with the hope of being helpful at most; it should not be taken as always accurate.
               If you belive you found an error, it could very much be one. In that case, you may report it.
-              Because it is still in quite early developpment, not many counters have been added to the database. It will be filled slowly.
+              Because it is still in quite early developpment, not many counters have been added to the database.
+              It will be filled slowly. Thank you for your understanding.
             """
         ]
       , Html.ul
         []
         (List.map (\(text, href) -> Html.li [] [ Html.a [ Attr.href href, Attr.target "_blank", Attr.rel "noopener" ] [ Html.text text ] ])
           [ ("explore the sources", "https://github.com/pictelm/josuushi")
-          , ("report an error (not yet)",     "") --"https://github.com/pictelm/josuushi/issues/template-or-something")
-          , ("report a bug (not yet)",        "") --"https://github.com/pictelm/josuushi/issues/template-or-something")
-          , ("request for counter (not yet)", "") --"https://github.com/pictelm/josuushi/issues/template-or-something")
-          , ("contribute (not yet)",          "") --"perdu.com")
+          , ("report an error",     "https://github.com/pictelm/josuushi/issues/new?labels=error&template=error-report.md")
+          , ("report a bug",        "https://github.com/pictelm/josuushi/issues/new?labels=bug&template=bug-report.md")
+          , ("request for counter", "https://github.com/pictelm/josuushi/issues/new?labels=rfc&template=counter-request.md")
           ])
       ] -- footer
     ] -- #root
