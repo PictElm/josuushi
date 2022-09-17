@@ -104,12 +104,16 @@ header button#theme-change {
     border: solid 2px var(--c);
     border-radius: .9em;
     color: var(--b);
+    align-self: center;
+    font-size: 1.7em;
     overflow: hidden;
-    max-width: 1.8em;
-    max-height: 1.8em;
+    max-width: 1.7em;
+    max-height: 1.7em;
+    white-space: nowrap;
 }
 header button#theme-change::before {
-    content: '\25d0\a0\a0\a0';
+    /*content: '\25d0\a0\a0\a0';*/
+    content: '\2009\1f506\a0\a0\a0';
 }
 
 form#search-bar {
@@ -131,9 +135,10 @@ form#search-bar button {
     border-left: none;
     overflow: hidden;
     max-width: 1.7em;
+    white-space: nowrap;
 }
 form#search-bar button::before {
-    content: '\1f50d\a0\a0\a0';
+    content: '\2009\1f50d\a0\a0\a0';
     /*content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42'%3E%3Cpath d='...' stroke='%2300F' stroke-width='5'/%3E%3C/svg%3E");
     /* YYY: emoji good enough */
 }

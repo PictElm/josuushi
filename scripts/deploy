@@ -1,7 +1,7 @@
 #!/bin/sh -ex
 # tries to deploy (ie. build-index-minify-commit) from the current (clean) branch
 # dangerous and not reliably, better off doing it manually
-not_deployed='.gitignore Main.elm README.md TODO.md elm.json scripts/'
+not_deployed='.github/ .gitignore Main.elm README.md TODO.md elm.json scripts/'
 build_result='index.html style.css main.js data/'
 
 test -z "`git status --porcelain`"
