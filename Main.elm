@@ -202,26 +202,27 @@ one_hundredquintillion_ = Ruby "一垓" "いちがい"
 gatherCounterWithRuby : AnInt -> Dict Int Ruby -> Ruby -> Ruby -- into a list of
 gatherCounterWithRuby number cases repr =
   let
+    repr_ = Dict.get 0 cases |> Maybe.withDefault repr
     recu : AnInt -> Bool -> Ruby
     recu an may_tail = (
       let
         n = String.toInt (anIntToString an) |> Maybe.withDefault 0
         special = if may_tail then Dict.get n cases else Nothing
-        tailing = (if may_tail then \w -> rubyCat [w, repr] else identity) >> always
+        tailing = (if may_tail then \w -> rubyCat [w, repr_] else identity) >> always
         rubyCatWithTailing = (\bn -> \k -> \l ->
             let o = String.toInt (anIntToString bn) |> Maybe.withDefault 0
             in if (anInt 0) == k && may_tail
               then
                 let ex = Dict.get o cases |> Maybe.map List.singleton
                 in rubyCat (case l of
-                    [b]      -> ex |> Maybe.withDefault [b, repr]
-                    a :: [b] -> a :: (ex |> Maybe.withDefault [b, repr])
+                    [b]      -> ex |> Maybe.withDefault [b, repr_]
+                    a :: [b] -> a :: (ex |> Maybe.withDefault [b, repr_])
                     _        -> [] -- unreachable
                   ) -- working with Lists in elm is...
               else rubyCat (l ++ [recu k may_tail])
           )
         recursing = (\anExactValue -> \aPowOfTen -> \itsRuby -> \itContainsItsDigit -> \u ->
-            let (div, mod) = divmodAnInt u aPowOfTen |> Maybe.withDefault (anInt 0, anInt 0) -- YYY: than even reachable?
+            let (div, mod) = divmodAnInt u aPowOfTen |> Maybe.withDefault (anInt 0, anInt 0) -- YYY: that even reachable?
             in rubyCatWithTailing anExactValue mod (
               if itContainsItsDigit
                 then [                itsRuby]
@@ -272,7 +273,9 @@ gatherCounterWithRuby number cases repr =
             --
             ] (\_ -> Ruby "全部の" "ぜんぶの") -- YYY: or 沢山 or idk (hm...)
       )
-  in recu number True
+  in if anInt 0 == number
+    then Ruby "無い" "ない" -- YYY: or idk (hm...)
+    else recu number True
 
 counterToRubyException : Exception -> Ruby
 counterToRubyException special =
