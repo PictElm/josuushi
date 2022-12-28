@@ -9,6 +9,6 @@
     <script src=data/index.js></script>
   </head>
   <body>
-    <script id=app>Elm.Main.init({ node: document.getElementById('app'), flags: [counterIndexJSON, decodeURIComponent(window.location.search.substring(3)), document.documentElement.style.colorScheme = localStorage.getItem('josuushi.user.theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')] }).ports.setStorage.subscribe(theme => localStorage.setItem('josuushi.user.theme', document.documentElement.style.colorScheme = theme))</script>
+    <script id=app>Elm.Main.init({ node: document.getElementById('app'), flags: [counterIndexJSON, decodeURIComponent(window.location.search.substring(3)), document.documentElement.style.colorScheme = localStorage.getItem('josuushi.user.theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')] }).ports.setStorage.subscribe(theme => localStorage.setItem('josuushi.user.theme', document.documentElement.style.colorScheme = theme))</script>
   </body>
 </html>

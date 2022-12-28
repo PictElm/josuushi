@@ -2,6 +2,9 @@
 
 * add tofugu lookup? `https://www.tofugu.com/japanese/japanese-counter[s]-kana/`
 
+* favicon?
+
+* fix '片' as in kake/kakera/hen (for now only in has hira - see mai)
 * about less common or such readings (eg. いっぴ, みったり, よったり, ...)
 * niti: distinguish tuitati (1st) and itiniti (1 day) (other such exception to account for?)
 * syuukan: is there a syuu (as in eg. 1st week?)
@@ -12,7 +15,6 @@
 
 ## see also
 
-- [Tae Kim](http://guidetojapanese.org/learn/grammar/numbers)
 - [Tofugu](https://www.tofugu.com/japanese/japanese-counters-list/)
 - [Wikipedia](https://en.wikipedia.org/wiki/Japanese_counter_word)
 - [jcount.html](https://www.trussel.com/jcount.htm)

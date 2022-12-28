@@ -1,0 +1,8 @@
+{
+  "repr": ["巻", "かん"],
+  "tags": ["tome", "volumes of books", "reel of film", "cassette tapes", "videotapes", "DVDs", "etc. that are in a series", "and scrolls."],
+  "cases": {
+    "1": ["一巻", "いっかん/ひとかん"],
+    "6": ["六巻", "ろっかん"]
+  }
+}
