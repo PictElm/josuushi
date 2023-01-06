@@ -981,18 +981,18 @@ view model =
         [ Html.text
             """
               This page is made available with the hope of being helpful at most; it should not be taken as always accurate.
-              If you belive you found an error, it could very much be one. In that case, you may report it.
-              Because it is still in quite early developpment, not many counters have been added to the database.
+              If you believe you found an error, it could very much be one. In that case, you may report it.
+              Because it is still in quite early development, not many counters have been added to the database.
               It will be filled slowly. Thank you for your understanding.
             """
         ]
       , Html.ul
         []
         (List.map (\(text, href) -> Html.li [] [ Html.a [ Attr.href href, Attr.target "_blank", Attr.rel "noopener" ] [ Html.text text ] ])
-          [ ("explore the sources", "https://github.com/pictelm/josuushi")
-          , ("report an error",     "https://github.com/pictelm/josuushi/issues/new?labels=error&template=error-report.md")
-          , ("report a bug",        "https://github.com/pictelm/josuushi/issues/new?labels=bug&template=bug-report.md")
-          , ("request for counter", "https://github.com/pictelm/josuushi/issues/new?labels=rfc&template=counter-request.md")
+          [ ("explore the sources", "https://github.com/naclsn/josuushi")
+          , ("report an error",     "https://github.com/naclsn/josuushi/issues/new?labels=error&template=error-report.md")
+          , ("report a bug",        "https://github.com/naclsn/josuushi/issues/new?labels=bug&template=bug-report.md")
+          , ("request for counter", "https://github.com/naclsn/josuushi/issues/new?labels=rfc&template=counter-request.md")
           ])
       ] -- footer
     ] -- #root
